@@ -1,49 +1,54 @@
 ﻿# Kaalis Flutter
 
-Magazine web Flutter inspiré d’un univers éditorial haut de gamme (Opinion, Portrait, Lieux, Style, Communauté) avec bloc Partenariats et modal de contact.
+Magazine web Flutter inspiré d’un univers éditorial haut de gamme (Opinion, Portrait, Lieux, Style, Communauté) avec un bloc Partenariats relié à une API JSON et un modal de contact.
 
 ## Prérequis
 
-- Flutter (canal stable, 3.x)
-- Chrome ou navigateur compatible pour les tests web
+- Flutter (canal **stable**, 3.x)
+- Chrome ou tout navigateur compatible pour les tests web
 
-`
+```bash
 flutter --version
-`
+```
 
 ## Commandes clés
 
 | Action | Commande |
 | --- | --- |
-| Installer | lutter pub get |
-| Analyse | lutter analyze |
-| Tests | lutter test |
-| Run web | lutter run -d chrome |
-| Build web | lutter build web --release |
+| Installer | `flutter pub get` |
+| Analyse | `flutter analyze` |
+| Tests | `flutter test` |
+| Run web | `flutter run -d chrome` |
+| Build web | `flutter build web --release` |
 
 ## Workflow recommandé
 
-1. Créer une issue (feature ou bug).
-2. Créer une branche (eat/..., ix/...).
-3. Dev + lutter analyze && flutter test.
-4. Ouvrir une PR → CI lutter-ci.yml.
-5. Merge → deploy-web.yml publie sur GitHub Pages.
+1. Créer une issue (feature ou bug) via les templates fournis.
+2. Créer une branche (`feat/...`, `fix/...`).
+3. Développer + `flutter analyze && flutter test`.
+4. Ouvrir une PR ⟶ CI `flutter-ci.yml`.
+5. Merge ⟶ `deploy-web.yml` publie automatiquement sur GitHub Pages (source = GitHub Actions dans *Settings → Pages*).
 
 ## CI/CD
 
-- .github/workflows/flutter-ci.yml : analyse + tests sur push/PR.
-- .github/workflows/deploy-web.yml : build web & déploiement automatique (Pages).
-  > Dans *Settings → Pages*, choisir **GitHub Actions** comme source.
+- `.github/workflows/flutter-ci.yml` : analyse + tests sur chaque push/PR (`master`/`main`).
+- `.github/workflows/deploy-web.yml` : build web release + déploiement GitHub Pages.
 
-## Modal partenaires
+## API Partenariats
 
-- Boutons « Contacter l’équipe » ouvrent un formulaire (overlay, ESC, bouton ✕).
-- Validation minimale, message de confirmation via SnackBar.
+- Données servies via `data/partners.json` (consommées depuis l’URL GitHub Raw `https://raw.githubusercontent.com/DmK4real/KaalisMag/master/data/partners.json`).
+- Modifiez ce fichier ou remplacez l’endpoint dans `lib/services/partners_api.dart` pour pointer vers votre propre backend.
+- La page Partenariats consomme l’API via `FutureBuilder` + placeholders (loading/erreur).
+
+## Modal Partenariats
+
+- Tous les boutons « Contacter l’équipe » ouvrent le formulaire (overlay rouille, touche Esc, bouton ✕).
+- Validation minimale sur chaque champ + `SnackBar` de confirmation.
 
 ## Idées prochaines
 
-- Tests widget pour chaque section.
-- Contenu dynamique (CMS/API).
-- Internationalisation (FR/EN).
+- Tests widget ciblant chaque section.
+- Contenu dynamique pour les autres pages (Opinion, Portrait, etc.).
+- Internationalisation FR/EN avec `flutter_localizations`.
 
 Bon build ✨

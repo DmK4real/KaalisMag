@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'services/partners_api.dart';
 
 void main() {
   runApp(const KaalisApp());
@@ -727,9 +728,17 @@ class _PartnersScaffold extends StatefulWidget {
 
 class _PartnersScaffoldState extends State<_PartnersScaffold> {
   bool _contactOpen = false;
+  late Future<List<PartnerOpportunity>> _partnersFuture;
+  final PartnersApiClient _apiClient = PartnersApiClient();
 
   void _openContact() => setState(() => _contactOpen = true);
   void _closeContact() => setState(() => _contactOpen = false);
+
+  @override
+  void initState() {
+    super.initState();
+    _partnersFuture = _apiClient.fetchOpportunities();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -741,7 +750,7 @@ class _PartnersScaffoldState extends State<_PartnersScaffold> {
             slivers: _buildPageSlivers(
               activeRoute: _Routes.partners,
               body: [
-                _PartnersContent(onContactTap: _openContact),
+                _PartnersContent(future: _partnersFuture, onContactTap: _openContact),
                 const _SectionDivider(),
               ],
             ),
@@ -753,43 +762,53 @@ class _PartnersScaffoldState extends State<_PartnersScaffold> {
   }
 }
 
-class _PartnerSectionData {
-  final String title;
-  final List<String> bullets;
-  final bool primary;
-  const _PartnerSectionData({required this.title, required this.bullets, this.primary = false});
+class _PartnersContent extends StatelessWidget {
+  final Future<List<PartnerOpportunity>> future;
+  final VoidCallback onContactTap;
+  const _PartnersContent({required this.future, required this.onContactTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<PartnerOpportunity>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const _PartnersLoading();
+        }
+        if (snapshot.hasError) {
+          return _SectionPlaceholder(
+            title: 'Partenariats',
+            message: 'Impossible de récupérer les opportunités (${snapshot.error}).',
+          );
+        }
+        final sections = snapshot.data;
+        if (sections == null || sections.isEmpty) {
+          return const _SectionPlaceholder(
+            title: 'Partenariats',
+            message: 'Aucune opportunité disponible pour le moment.',
+          );
+        }
+
+        return _Container(
+          padding: const EdgeInsets.fromLTRB(48, 64, 48, 96),
+          maxWidth: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              for (var i = 0; i < sections.length; i++) ...[
+                _PartnerRow(data: sections[i], onContactTap: onContactTap),
+                if (i < sections.length - 1) const SizedBox(height: 96),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-const _partnerSections = [
-  _PartnerSectionData(
-    title: 'Contenu sponsorisé et partenariats de marque',
-    bullets: [
-      'Articles, vidéos ou séries sponsorisés',
-      'Placement de produit intégré dans les formats existants',
-      'Campagnes co-brandées pour la vente de produits/services (collaborations créatives)',
-    ],
-    primary: true,
-  ),
-  _PartnerSectionData(
-    title: 'Événements et expériences',
-    bullets: [
-      'Événements sponsorisés (financement partiel ou total)',
-      'Événements payants (vente de tickets)',
-      'Partenariats hospitalité / lieux (hôtels, restaurants, galeries ou bars)',
-    ],
-  ),
-  _PartnerSectionData(
-    title: 'Publicité et visibilité digitale',
-    bullets: [
-      'Espaces publicitaires directs (bannière, story ou encart sur les canaux Kaalis)',
-      'Campagnes digitales complètes (conception, production et diffusion d’une mini-campagne sur nos plateformes)',
-    ],
-  ),
-];
-
-class _PartnersContent extends StatelessWidget {
-  final VoidCallback onContactTap;
-  const _PartnersContent({required this.onContactTap});
+class _PartnersLoading extends StatelessWidget {
+  const _PartnersLoading();
 
   @override
   Widget build(BuildContext context) {
@@ -798,11 +817,17 @@ class _PartnersContent extends StatelessWidget {
       maxWidth: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          for (var i = 0; i < _partnerSections.length; i++) ...[
-            _PartnerRow(data: _partnerSections[i], onContactTap: onContactTap),
-            if (i < _partnerSections.length - 1) const SizedBox(height: 96),
-          ],
+        children: const [
+          SizedBox(
+            height: 80,
+            width: 80,
+            child: CircularProgressIndicator(strokeWidth: 5, color: kaalisPrimary),
+          ),
+          SizedBox(height: 24),
+          Text(
+            'Chargement des opportunités…',
+            style: TextStyle(color: kaalisText, fontSize: 16),
+          ),
         ],
       ),
     );
@@ -810,7 +835,7 @@ class _PartnersContent extends StatelessWidget {
 }
 
 class _PartnerRow extends StatelessWidget {
-  final _PartnerSectionData data;
+  final PartnerOpportunity data;
   final VoidCallback onContactTap;
   const _PartnerRow({required this.data, required this.onContactTap});
 
@@ -869,7 +894,7 @@ class _PartnerMedia extends StatelessWidget {
 }
 
 class _PartnerContentBlock extends StatelessWidget {
-  final _PartnerSectionData data;
+  final PartnerOpportunity data;
   final bool isWide;
   final VoidCallback onContactTap;
   const _PartnerContentBlock({
@@ -884,7 +909,7 @@ class _PartnerContentBlock extends StatelessWidget {
         ? (isWide ? 64.0 : 44.0)
         : (isWide ? 48.0 : 36.0);
     final titleWidget = Text(
-      data.primary ? data.title : data.title,
+      data.title,
       style: GoogleFonts.playfairDisplay(
         textStyle: TextStyle(
           fontSize: titleSize,
@@ -898,36 +923,7 @@ class _PartnerContentBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        data.primary
-            ? Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Contenu sponsorisé et\n',
-                      style: GoogleFonts.playfairDisplay(
-                        textStyle: TextStyle(
-                          fontSize: titleSize,
-                          height: 1.05,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF111111),
-                        ),
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'partenariats de marque',
-                      style: GoogleFonts.playfairDisplay(
-                        textStyle: TextStyle(
-                          fontSize: titleSize,
-                          height: 1.05,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF111111),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            : titleWidget,
+        titleWidget,
         const SizedBox(height: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

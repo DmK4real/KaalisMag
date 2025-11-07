@@ -1,0 +1,30 @@
+﻿{
+  "opportunities": [
+    {
+      "title": "Contenu sponsorisé et\npartenariats de marque",
+      "primary": true,
+      "bullets": [
+        "Articles, vidéos ou séries sponsorisés",
+        "Placement de produit intégré dans les formats existants",
+        "Campagnes co-brandées pour la vente de produits/services (collaborations créatives)"
+      ]
+    },
+    {
+      "title": "Événements et expériences",
+      "primary": false,
+      "bullets": [
+        "Événements sponsorisés (financement partiel ou total)",
+        "Événements payants (vente de tickets)",
+        "Partenariats hospitalité / lieux (hôtels, restaurants, galeries ou bars)"
+      ]
+    },
+    {
+      "title": "Publicité et visibilité digitale",
+      "primary": false,
+      "bullets": [
+        "Espaces publicitaires directs (bannière, story ou encart sur les canaux Kaalis)",
+        "Campagnes digitales complètes (conception, production et diffusion d’une mini-campagne sur nos plateformes)"
+      ]
+    }
+  ]
+}
