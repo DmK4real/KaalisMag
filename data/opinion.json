@@ -1,0 +1,49 @@
+﻿{
+  "home_cards": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1505753065532-68713e211a3b?q=80&w=1200&auto=format&fit=crop",
+      "title": "Pourquoi les fêtes discos sont-elles si populaires ?",
+      "date": "22/04/2030",
+      "description": "Face à l'intérêt grandissant envers les fêtes discos, les autorités ont décidé de fermer les magasins de déguisement."
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop",
+      "title": "La nouvelle vague des jardins urbains",
+      "date": "22/04/2030",
+      "description": "Les terrasses abandonnées se transforment en forêts suspendues grâce à une génération d'artistes verts."
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop",
+      "title": "Les créatrices qui réinventent la mode",
+      "date": "22/04/2030",
+      "description": "Trois studios féminins propulsent une couture radicale pensée pour les villes africaines."
+    }
+  ],
+  "articles": [
+    {
+      "title": "Pourquoi les fêtes discos sont-elles si populaires ?",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1505753065532-68713e211a3b?q=80&w=1600&auto=format&fit=crop"
+    },
+    {
+      "title": "La nouvelle vague des jardins urbains",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "title": "Les créatrices qui réinventent la mode",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "title": "Quand l'architecture rencontre la nature",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1200&auto=format&fit=crop"
+    },
+    {
+      "title": "Une génération à la recherche de sens",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"
+    }
+  ]
+}

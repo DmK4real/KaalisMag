@@ -4,7 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'services/opinion_api.dart';
 import 'services/partners_api.dart';
+import 'services/portrait_api.dart';
 
 void main() {
   runApp(const KaalisApp());
@@ -98,41 +100,6 @@ class NewsletterProvider extends InheritedNotifier<NewsletterController> {
   @override
   bool updateShouldNotify(NewsletterProvider oldWidget) => notifier != oldWidget.notifier;
 }
-
-class _OpinionArticle {
-  final String title;
-  final String date;
-  final String imageUrl;
-  const _OpinionArticle({required this.title, required this.date, required this.imageUrl});
-}
-
-const _opinionArticles = [
-  _OpinionArticle(
-    title: 'Pourquoi les f\u00EAtes discos sont-elles si populaires ?',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1505753065532-68713e211a3b?q=80&w=1600&auto=format&fit=crop',
-  ),
-  _OpinionArticle(
-    title: 'La nouvelle vague des jardins urbains',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop',
-  ),
-  _OpinionArticle(
-    title: 'Les cr\u00E9atrices qui r\u00E9inventent la mode',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1200&auto=format&fit=crop',
-  ),
-  _OpinionArticle(
-    title: 'Quand l\'architecture rencontre la nature',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1200&auto=format&fit=crop',
-  ),
-  _OpinionArticle(
-    title: 'Une g\u00E9n\u00E9ration \u00E0 la recherche de sens',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop',
-  ),
-];
 
 class _LieuxArticle {
   final String title;
@@ -547,47 +514,104 @@ class _HeaderBrand extends StatelessWidget {
   }
 }
 
-class OpinionPage extends StatelessWidget {
+class OpinionPage extends StatefulWidget {
   const OpinionPage({super.key});
 
   @override
+  State<OpinionPage> createState() => _OpinionPageState();
+}
+
+class _OpinionPageState extends State<OpinionPage> {
+  late final Future<OpinionData> _future = OpinionRepository.instance.fetch();
+
+  @override
   Widget build(BuildContext context) {
-    final hero = _opinionArticles.first;
-    final others = _opinionArticles.skip(1).toList();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: _buildPageSlivers(
-          activeRoute: _Routes.opinion,
-          body: [
-            _OpinionHero(article: hero),
-            _OpinionGrid(articles: others),
-            const _SectionDivider(),
-          ],
-        ),
+      body: FutureBuilder<OpinionData>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const _AsyncSectionLoading(message: 'Chargement des articles Opinion…');
+          }
+          if (snapshot.hasError) {
+            return const _SectionPlaceholder(
+              title: 'Opinion',
+              message: 'Impossible d’afficher les articles pour le moment.',
+            );
+          }
+          final data = snapshot.data;
+          if (data == null || data.articles.isEmpty) {
+            return const _SectionPlaceholder(
+              title: 'Opinion',
+              message: 'Aucun article disponible pour le moment.',
+            );
+          }
+
+          final hero = data.articles.first;
+          final others = data.articles.skip(1).toList();
+          return CustomScrollView(
+            slivers: _buildPageSlivers(
+              activeRoute: _Routes.opinion,
+              body: [
+                _OpinionHero(article: hero),
+                _OpinionGrid(articles: others),
+                const _SectionDivider(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-class PortraitPage extends StatelessWidget {
+class PortraitPage extends StatefulWidget {
   const PortraitPage({super.key});
 
   @override
+  State<PortraitPage> createState() => _PortraitPageState();
+}
+
+class _PortraitPageState extends State<PortraitPage> {
+  late final Future<PortraitData> _future = PortraitRepository.instance.fetch();
+
+  @override
   Widget build(BuildContext context) {
-    final hero = _portraitFeatures.first;
-    final secondary = _portraitFeatures.skip(1).toList();
     return Scaffold(
       backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: _buildPageSlivers(
-          activeRoute: _Routes.portrait,
-          body: [
-            _PortraitHero(feature: hero),
-            for (final feature in secondary) _PortraitSplit(feature: feature),
-            const _SectionDivider(),
-          ],
-        ),
+      body: FutureBuilder<PortraitData>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const _AsyncSectionLoading(message: 'Chargement des portraits…');
+          }
+          if (snapshot.hasError) {
+            return const _SectionPlaceholder(
+              title: 'Portrait',
+              message: 'Impossible d’afficher les portraits pour le moment.',
+            );
+          }
+          final data = snapshot.data;
+          if (data == null || data.features.isEmpty) {
+            return const _SectionPlaceholder(
+              title: 'Portrait',
+              message: 'Aucun portrait disponible pour le moment.',
+            );
+          }
+          final hero = data.features.first;
+          final secondary = data.features.skip(1).toList();
+          return CustomScrollView(
+            slivers: _buildPageSlivers(
+              activeRoute: _Routes.portrait,
+              body: [
+                _PortraitHero(feature: hero),
+                for (final feature in secondary) _PortraitSplit(feature: feature),
+                const _SectionDivider(),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -773,7 +797,7 @@ class _PartnersContent extends StatelessWidget {
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const _PartnersLoading();
+          return const _AsyncSectionLoading(message: 'Chargement des opportunités…');
         }
         if (snapshot.hasError) {
           return _SectionPlaceholder(
@@ -807,8 +831,9 @@ class _PartnersContent extends StatelessWidget {
   }
 }
 
-class _PartnersLoading extends StatelessWidget {
-  const _PartnersLoading();
+class _AsyncSectionLoading extends StatelessWidget {
+  final String message;
+  const _AsyncSectionLoading({required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -817,16 +842,16 @@ class _PartnersLoading extends StatelessWidget {
       maxWidth: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: const [
-          SizedBox(
+        children: [
+          const SizedBox(
             height: 80,
             width: 80,
             child: CircularProgressIndicator(strokeWidth: 5, color: kaalisPrimary),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           Text(
-            'Chargement des opportunités…',
-            style: TextStyle(color: kaalisText, fontSize: 16),
+            message,
+            style: const TextStyle(color: kaalisText, fontSize: 16),
           ),
         ],
       ),
@@ -1564,105 +1589,111 @@ class SectionHead extends StatelessWidget {
   }
 }
 
-class SectionOpinion extends StatelessWidget {
-  SectionOpinion({super.key});
+class SectionOpinion extends StatefulWidget {
+  const SectionOpinion({super.key});
 
-  final _cards = const [
-    (
-      'https://images.unsplash.com/photo-1505753065532-68713e211a3b?q=80&w=1200&auto=format&fit=crop',
-      'Pourquoi les f\u00EAtes discos sont-elles si populaires ?',
-      'Face \u00E0 l\'int\u00E9r\u00EAt grandissant envers les f\u00EAtes discos, les autorit\u00E9s ont d\u00E9cid\u00E9 de fermer les magasins de d\u00E9guisement.'
-    ),
-    (
-      'https://images.unsplash.com/photo-1560449804-ec20e2ae335c?q=80&w=1200&auto=format&fit=crop',
-      'Titre',
-      'Description'
-    ),
-    (
-      'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0d?q=80&w=1200&auto=format&fit=crop',
-      'Titre',
-      'Description'
-    ),
-  ];
+  @override
+  State<SectionOpinion> createState() => _SectionOpinionState();
+}
+
+class _SectionOpinionState extends State<SectionOpinion> {
+  late final Future<OpinionData> _future = OpinionRepository.instance.fetch();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionHead(title: 'Opinion', action: 'Voir Plus', showDivider: false),
-        const SizedBox(height: _sectionSpacing),
-        _Container(
-          padding: const EdgeInsets.symmetric(horizontal: 48),
-          maxWidth: double.infinity,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              const gap = 32.0;
-              final width = constraints.maxWidth;
-              if (width >= 1080) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _OpinionCard.fromTuple(_cards[0])),
-                    const SizedBox(width: gap),
-                    Expanded(child: _OpinionCard.fromTuple(_cards[1])),
-                    const SizedBox(width: gap),
-                    Expanded(child: _OpinionCard.fromTuple(_cards[2])),
-                  ],
-                );
-              }
+    return FutureBuilder<OpinionData>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const _AsyncSectionLoading(message: 'Chargement des articles Opinion…');
+        }
+        if (snapshot.hasError) {
+          return const _SectionPlaceholder(
+            title: 'Opinion',
+            message: 'Impossible d’afficher les articles pour le moment.',
+          );
+        }
+        final data = snapshot.data;
+        if (data == null || data.homeCards.isEmpty) {
+          return const _SectionPlaceholder(
+            title: 'Opinion',
+            message: 'Aucun article disponible pour le moment.',
+          );
+        }
 
-              if (width >= 720) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _OpinionCard.fromTuple(_cards[0], isPrimary: true),
-                    const SizedBox(height: gap),
-                    Row(
+        final cards = data.homeCards;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SectionHead(title: 'Opinion', action: 'Voir Plus', showDivider: false),
+            const SizedBox(height: _sectionSpacing),
+            _Container(
+              padding: const EdgeInsets.symmetric(horizontal: 48),
+              maxWidth: double.infinity,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  const gap = 32.0;
+                  final width = constraints.maxWidth;
+                  if (width >= 1080 && cards.length >= 3) {
+                    return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: _OpinionCard.fromTuple(_cards[1])),
+                        Expanded(child: _OpinionCard(data: cards[0], isPrimary: true)),
                         const SizedBox(width: gap),
-                        Expanded(child: _OpinionCard.fromTuple(_cards[2])),
+                        Expanded(child: _OpinionCard(data: cards[1])),
+                        const SizedBox(width: gap),
+                        Expanded(child: _OpinionCard(data: cards[2])),
                       ],
-                    ),
-                  ],
-                );
-              }
+                    );
+                  }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _OpinionCard.fromTuple(_cards[0], isPrimary: true),
-                  const SizedBox(height: gap),
-                  _OpinionCard.fromTuple(_cards[1]),
-                  const SizedBox(height: gap),
-                  _OpinionCard.fromTuple(_cards[2]),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
+                  if (width >= 720 && cards.length >= 3) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _OpinionCard(data: cards[0], isPrimary: true),
+                        const SizedBox(height: gap),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _OpinionCard(data: cards[1])),
+                            const SizedBox(width: gap),
+                            Expanded(child: _OpinionCard(data: cards[2])),
+                          ],
+                        ),
+                      ],
+                    );
+                  }
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _OpinionCard(data: cards.first, isPrimary: true),
+                      const SizedBox(height: gap),
+                      for (final card in cards.skip(1)) ...[
+                        _OpinionCard(data: card),
+                        const SizedBox(height: gap),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
 
 class _OpinionCard extends StatelessWidget {
-  final String img;
-  final String title;
-  final String desc;
+  final OpinionHomeCard data;
   final bool isPrimary;
-  const _OpinionCard({required this.img, required this.title, required this.desc, this.isPrimary = false});
-
-  factory _OpinionCard.fromTuple((String, String, String) data, {bool isPrimary = false}) {
-    return _OpinionCard(img: data.$1, title: data.$2, desc: data.$3, isPrimary: isPrimary);
-  }
+  const _OpinionCard({required this.data, this.isPrimary = false});
 
   @override
   Widget build(BuildContext context) {
     final aspectRatio = isPrimary ? 4 / 3 : 3 / 2;
-    final iconSize = isPrimary ? 60.0 : 48.0;
     final titleStyle = GoogleFonts.mulish(
       textStyle: TextStyle(
         fontSize: isPrimary ? 28 : 24,
@@ -1676,21 +1707,20 @@ class _OpinionCard extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: aspectRatio,
-          child: Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFFF5F5F5),
-                border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-              ),
-            child: Center(
-              child: Icon(Icons.image_outlined, size: iconSize, color: const Color(0xFFB0B0B0)),
+          child: ClipRRect(
+            borderRadius: const BorderRadius.all(Radius.circular(4)),
+            child: Image.network(
+              data.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFFE0E0E0)),
             ),
           ),
         ),
         const SizedBox(height: 20),
-        Text(title, style: titleStyle),
+        Text(data.title, style: titleStyle),
         const SizedBox(height: 8),
         Text(
-          '22/04/2020',
+          data.date,
           style: GoogleFonts.mulish(
             textStyle: const TextStyle(
               fontSize: 12,
@@ -1701,7 +1731,7 @@ class _OpinionCard extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          desc,
+          data.description,
           style: GoogleFonts.mulish(
             textStyle: const TextStyle(
               fontSize: 15,
@@ -1716,7 +1746,7 @@ class _OpinionCard extends StatelessWidget {
 }
 
 class _OpinionHero extends StatelessWidget {
-  final _OpinionArticle article;
+  final OpinionArticle article;
   const _OpinionHero({required this.article});
 
   @override
@@ -1828,7 +1858,7 @@ class _OpinionHero extends StatelessWidget {
 }
 
 class _OpinionGrid extends StatelessWidget {
-  final List<_OpinionArticle> articles;
+  final List<OpinionArticle> articles;
   const _OpinionGrid({required this.articles});
 
   @override
@@ -1863,7 +1893,7 @@ class _OpinionGrid extends StatelessWidget {
 }
 
 class _OpinionGridCard extends StatelessWidget {
-  final _OpinionArticle article;
+  final OpinionArticle article;
   const _OpinionGridCard({required this.article});
 
   @override
@@ -1946,7 +1976,7 @@ class _ReadMoreLink extends StatelessWidget {
 }
 
 class _PortraitHero extends StatelessWidget {
-  final _PortraitFeature feature;
+  final PortraitFeature feature;
   const _PortraitHero({required this.feature});
 
   @override
@@ -2047,7 +2077,7 @@ class _PortraitHero extends StatelessWidget {
 }
 
 class _PortraitSplit extends StatelessWidget {
-  final _PortraitFeature feature;
+  final PortraitFeature feature;
   const _PortraitSplit({required this.feature});
 
   @override
@@ -2103,7 +2133,7 @@ class _PortraitSplit extends StatelessWidget {
 }
 
 class _PortraitDetails extends StatelessWidget {
-  final _PortraitFeature feature;
+  final PortraitFeature feature;
   const _PortraitDetails({required this.feature});
 
   @override
@@ -2181,133 +2211,159 @@ class _PortraitImage extends StatelessWidget {
   }
 }
 
-class SectionPortrait extends StatelessWidget {
-  SectionPortrait({super.key});
+class SectionPortrait extends StatefulWidget {
+  const SectionPortrait({super.key});
 
-  final _imgs = const [
-    (
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop',
-      'Frank Ocean',
-      'L\'album de l\'ann\u00E9e',
-      '22/04/2030'
-    ),
-    (
-      'https://images.unsplash.com/photo-1590080875835-78e4f4c1f909?q=80&w=1200&auto=format&fit=crop',
-      'Damson Idris',
-      'Pr\u00EAt pour les Oscars',
-      '22/04/2030'
-    ),
-  ];
+  @override
+  State<SectionPortrait> createState() => _SectionPortraitState();
+}
+
+class _SectionPortraitState extends State<SectionPortrait> {
+  late final Future<PortraitData> _future = PortraitRepository.instance.fetch();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-        const SectionHead(title: 'Portrait', action: 'Voir Plus', showDivider: false),
-        const SizedBox(height: _sectionSpacing),
-          _Container(
-            padding: const EdgeInsets.fromLTRB(48, 64, 48, 56),
-            maxWidth: double.infinity,
-            child: LayoutBuilder(
-              builder: (context, c) {
-                const gap = 32.0;
-                final isWide = c.maxWidth >= 900;
+    return FutureBuilder<PortraitData>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const _AsyncSectionLoading(message: 'Chargement des portraits…');
+        }
+        if (snapshot.hasError) {
+          return const _SectionPlaceholder(
+            title: 'Portrait',
+            message: 'Impossible d’afficher les portraits pour le moment.',
+          );
+        }
+        final data = snapshot.data;
+        if (data == null || data.spotlights.isEmpty) {
+          return const _SectionPlaceholder(
+            title: 'Portrait',
+            message: 'Aucun portrait disponible pour le moment.',
+          );
+        }
+        final cards = data.spotlights.take(2).toList();
 
-                Widget card((String, String, String, String) data, {required bool wide, required bool isPrimary}) {
-                  final alignment = isPrimary ? Alignment.centerLeft : Alignment.bottomLeft;
-                  final EdgeInsets overlayPadding = isPrimary
-                      ? const EdgeInsets.symmetric(horizontal: 26)
-                      : const EdgeInsets.fromLTRB(26, 0, 26, 26);
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SectionHead(title: 'Portrait', action: 'Voir Plus', showDivider: false),
+            const SizedBox(height: _sectionSpacing),
+            _Container(
+              padding: const EdgeInsets.fromLTRB(48, 64, 48, 56),
+              maxWidth: double.infinity,
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  const gap = 32.0;
+                  final isWide = c.maxWidth >= 900 && cards.length >= 2;
+                  if (isWide) {
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(child: _buildSpotlightCard(cards[0], wide: true, isPrimary: true)),
+                        const SizedBox(width: gap),
+                        Expanded(child: _buildSpotlightCard(cards[1], wide: true, isPrimary: false)),
+                      ],
+                    );
+                  }
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AspectRatio(
-                        aspectRatio: wide ? 16 / 10 : 4 / 3,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Container(color: const Color(0xFFEFEFEF)),
-                            Positioned.fill(
-                              child: Padding(
-                                padding: overlayPadding,
-                                child: Align(
-                                  alignment: alignment,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        data.$2,
-                                        style: GoogleFonts.playfairDisplay(
-                                          textStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 32,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        data.$3,
-                                        style: GoogleFonts.mulish(
-                                          textStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 17,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                      _buildSpotlightCard(cards[0], wide: false, isPrimary: true),
+                      if (cards.length > 1) ...[
+                        const SizedBox(height: gap),
+                        _buildSpotlightCard(cards[1], wide: false, isPrimary: false),
+                      ],
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSpotlightCard(PortraitSpotlight data, {required bool wide, required bool isPrimary}) {
+    final alignment = isPrimary ? Alignment.centerLeft : Alignment.bottomLeft;
+    final EdgeInsets overlayPadding = isPrimary
+        ? const EdgeInsets.symmetric(horizontal: 26)
+        : const EdgeInsets.fromLTRB(26, 0, 26, 26);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AspectRatio(
+          aspectRatio: wide ? 16 / 10 : 4 / 3,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.network(
+                data.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFFEFEFEF)),
+              ),
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0x33000000), Color(0xAA000000)],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: overlayPadding,
+                child: Align(
+                  alignment: alignment,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        data.title,
+                        style: GoogleFonts.playfairDisplay(
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 32,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Text(
-                        data.$4,
+                        data.subtitle,
                         style: GoogleFonts.mulish(
                           textStyle: const TextStyle(
-                            fontSize: 12,
-                            color: kaalisMuted,
-                            letterSpacing: 0.4,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 17,
                           ),
                         ),
                       ),
                     ],
-                  );
-                }
-
-                if (isWide) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(child: card(_imgs[0], wide: true, isPrimary: true)),
-                      const SizedBox(width: gap),
-                      Expanded(child: card(_imgs[1], wide: true, isPrimary: false)),
-                    ],
-                  );
-                }
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    card(_imgs[0], wide: false, isPrimary: true),
-                    const SizedBox(height: gap),
-                    card(_imgs[1], wide: false, isPrimary: false),
-                  ],
-                );
-              },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          data.date,
+          style: GoogleFonts.mulish(
+            textStyle: const TextStyle(
+              fontSize: 12,
+              color: kaalisMuted,
+              letterSpacing: 0.4,
             ),
           ),
-        ],
-      );
-    }
+        ),
+      ],
+    );
   }
+}
 
 class SectionChoix extends StatelessWidget {
   const SectionChoix({super.key});
@@ -3916,39 +3972,3 @@ class _FooterLink extends StatelessWidget {
     );
   }
 }
-class _PortraitFeature {
-  final String title;
-  final String date;
-  final String imageUrl;
-  final bool grayscale;
-  const _PortraitFeature({
-    required this.title,
-    required this.date,
-    required this.imageUrl,
-    this.grayscale = false,
-  });
-}
-
-const _portraitFeatures = [
-  _PortraitFeature(
-    title: 'Frank Ocean, la voix \u00E0 fleur de peau',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1600&auto=format&fit=crop',
-    grayscale: true,
-  ),
-  _PortraitFeature(
-    title: 'Damson Idris pr\u00EAt pour les Oscars',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1590080875835-78e4f4c1f909?q=80&w=1400&auto=format&fit=crop',
-  ),
-  _PortraitFeature(
-    title: 'Michaela Coel, l\'\u00E9criture comme manifeste',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1400&auto=format&fit=crop',
-  ),
-  _PortraitFeature(
-    title: 'Abidjan, nouvelle capitale des studios cr\u00E9atifs',
-    date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400&auto=format&fit=crop',
-  ),
-];

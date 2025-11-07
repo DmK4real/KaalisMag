@@ -34,11 +34,16 @@ flutter --version
 - `.github/workflows/flutter-ci.yml` : analyse + tests sur chaque push/PR (`master`/`main`).
 - `.github/workflows/deploy-web.yml` : build web release + déploiement GitHub Pages.
 
-## API Partenariats
+## API Contenu (Opinion / Portrait / Partenariats)
 
-- Données servies via `data/partners.json` (consommées depuis l’URL GitHub Raw `https://raw.githubusercontent.com/DmK4real/KaalisMag/master/data/partners.json`).
-- Modifiez ce fichier ou remplacez l’endpoint dans `lib/services/partners_api.dart` pour pointer vers votre propre backend.
-- La page Partenariats consomme l’API via `FutureBuilder` + placeholders (loading/erreur).
+| Zone | JSON source | Client Flutter | Notes |
+| --- | --- | --- | --- |
+| Opinion (home + page dédiée) | `data/opinion.json` | `lib/services/opinion_api.dart` | Home cards + liste d’articles |
+| Portrait (home + page dédiée) | `data/portrait.json` | `lib/services/portrait_api.dart` | Spotlights + features |
+| Partenariats | `data/partners.json` | `lib/services/partners_api.dart` | Opportunités + modal |
+
+Chaque service pointe par défaut sur l’URL GitHub Raw correspondante (`https://raw.githubusercontent.com/DmK4real/KaalisMag/master/data/...`).  
+Tu peux éditer les fichiers JSON ou remplacer les endpoints dans les clients pour cibler ton propre backend/CMS.
 
 ## Modal Partenariats
 
