@@ -1,0 +1,42 @@
+﻿{
+  "spotlights": [
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop",
+      "title": "Frank Ocean",
+      "subtitle": "L'album de l'année",
+      "date": "22/04/2030"
+    },
+    {
+      "imageUrl": "https://images.unsplash.com/photo-1590080875835-78e4f4c1f909?q=80&w=1200&auto=format&fit=crop",
+      "title": "Damson Idris",
+      "subtitle": "Prêt pour les Oscars",
+      "date": "22/04/2030"
+    }
+  ],
+  "features": [
+    {
+      "title": "Frank Ocean, la voix à fleur de peau",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1600&auto=format&fit=crop",
+      "grayscale": true
+    },
+    {
+      "title": "Damson Idris prêt pour les Oscars",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1590080875835-78e4f4c1f909?q=80&w=1400&auto=format&fit=crop",
+      "grayscale": false
+    },
+    {
+      "title": "Michaela Coel, l'écriture comme manifeste",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1400&auto=format&fit=crop",
+      "grayscale": false
+    },
+    {
+      "title": "Abidjan, nouvelle capitale des studios créatifs",
+      "date": "22/04/2030",
+      "imageUrl": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400&auto=format&fit=crop",
+      "grayscale": false
+    }
+  ]
+}
