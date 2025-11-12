@@ -20,7 +20,25 @@ const newsletterBg = Color(0xFFE9C85A);
 const newsletterText = Color(0xFF111111);
 const newsletterMuted = Color(0xFF6B6B6B);
 // Shared vertical rhythm for the Home page sections to identify white-space blocks.
-const double _sectionSpacing = 96.0;
+const double _sectionSpacing = 30;
+const double _heroOpinionDividerTop =
+    12; // Gap between the hero block and the Opinion divider.
+const double _heroOpinionDividerBottom =
+    20; // Space after the divider before Opinion content.
+const double _opinionCardHeadingGap =
+    12; // Gap between the Opinion heading/button and the card grid.
+const double _opinionButtonTopMargin =
+    8; // Space between the heading and the "Voir Plus" button.
+const double _portraitButtonTopMargin =
+    10; // Space between the Portrait heading and its button.
+const double _portraitCardHeadingGap =
+    18; // Vertical space between the Portrait button and the cards.
+const double _portraitHeadingTopMargin =
+    24; // Extra buffer above the Portrait title.
+const double _opinionCardHeight =
+    560; // Fixed height for each Opinion card to keep them uniform.
+const double _opinionCardImageAspectRatio = 16 / 9;
+const int _opinionCardDescriptionMaxLines = 6;
 final Uri _instagramProfile = Uri.parse(
   'https://www.instagram.com/kaalismag?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
 );
@@ -34,6 +52,34 @@ TextStyle _ppAcma([TextStyle? style]) {
     fontFamily: _ppAcmaFamily,
     fontWeight: weight,
   );
+}
+
+const Color _cardPlaceholderBackground = Color(0xFFE8E8E8);
+const Color _cardPlaceholderIconColor = Color(0xFFB0B0B0);
+
+class _CardPlaceholder extends StatelessWidget {
+  final IconData icon;
+  final BorderRadius borderRadius;
+  final double iconSize;
+
+  const _CardPlaceholder({
+    super.key,
+    this.icon = Icons.image_outlined,
+    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
+    this.iconSize = 48,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: Container(
+        color: _cardPlaceholderBackground,
+        alignment: Alignment.center,
+        child: Icon(icon, size: iconSize, color: _cardPlaceholderIconColor),
+      ),
+    );
+  }
 }
 
 class _Routes {
@@ -69,10 +115,26 @@ const _navLinks = [
 ];
 
 const _grayscaleMatrix = <double>[
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0, 0, 0, 1, 0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0.2126,
+  0.7152,
+  0.0722,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  0,
 ];
 
 class NewsletterController extends ChangeNotifier {
@@ -108,47 +170,55 @@ class NewsletterProvider extends InheritedNotifier<NewsletterController> {
   }) : super(notifier: controller, child: child);
 
   static NewsletterController of(BuildContext context) {
-    final provider = context.dependOnInheritedWidgetOfExactType<NewsletterProvider>();
+    final provider =
+        context.dependOnInheritedWidgetOfExactType<NewsletterProvider>();
     assert(provider != null, 'NewsletterProvider not found in context');
     return provider!.notifier!;
   }
 
   @override
-  bool updateShouldNotify(NewsletterProvider oldWidget) => notifier != oldWidget.notifier;
+  bool updateShouldNotify(NewsletterProvider oldWidget) =>
+      notifier != oldWidget.notifier;
 }
 
 class _LieuxArticle {
   final String title;
   final String date;
   final String imageUrl;
-  const _LieuxArticle({required this.title, required this.date, required this.imageUrl});
+  const _LieuxArticle(
+      {required this.title, required this.date, required this.imageUrl});
 }
 
 const _lieuxArticles = [
   _LieuxArticle(
     title: 'La maison qui r\u00E9veille le quartier',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=1600&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1505691723518-36a5ac3be353?q=80&w=1600&auto=format&fit=crop',
   ),
   _LieuxArticle(
     title: 'Les jardins suspendus d\'Abidjan',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop',
   ),
   _LieuxArticle(
     title: 'Un h\u00F4tel art d\u00E9co revisite les ann\u00E9es 70',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?q=80&w=1200&auto=format&fit=crop',
   ),
   _LieuxArticle(
     title: 'Le march\u00E9 cach\u00E9 des artisans',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop',
   ),
   _LieuxArticle(
     title: 'Une adresse seaside minimaliste',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1529429617124-aee711a5f676?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1529429617124-aee711a5f676?q=80&w=1200&auto=format&fit=crop',
   ),
 ];
 
@@ -156,34 +226,40 @@ class _StyleArticle {
   final String title;
   final String date;
   final String imageUrl;
-  const _StyleArticle({required this.title, required this.date, required this.imageUrl});
+  const _StyleArticle(
+      {required this.title, required this.date, required this.imageUrl});
 }
 
 const _styleArticles = [
   _StyleArticle(
     title: 'Le denim sculpt\u00E9 du printemps',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1600&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=1600&auto=format&fit=crop',
   ),
   _StyleArticle(
     title: 'Palette \u00E9pic\u00E9e pour l\u2019\u00E9t\u00E9',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop',
   ),
   _StyleArticle(
     title: 'Accessoires en raphia, le nouveau chic',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1514996937319-344454492b37?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1514996937319-344454492b37?q=80&w=1200&auto=format&fit=crop',
   ),
   _StyleArticle(
     title: 'C\u00E9ramique et soie : un mix inattendu',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1200&auto=format&fit=crop',
   ),
   _StyleArticle(
     title: 'La garde-robe minimaliste revisit\u00E9e',
     date: '22/04/2030',
-    imageUrl: 'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1200&auto=format&fit=crop',
+    imageUrl:
+        'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=1200&auto=format&fit=crop',
   ),
 ];
 
@@ -191,28 +267,46 @@ class _SearchEntry {
   final String title;
   final String category;
   final String route;
-  const _SearchEntry({required this.title, required this.category, required this.route});
+  const _SearchEntry(
+      {required this.title, required this.category, required this.route});
 }
 
 List<_SearchEntry> _buildSearchEntries() {
   final entries = <_SearchEntry>[
-    const _SearchEntry(title: 'Accueil', category: 'Navigation', route: _Routes.home),
-    const _SearchEntry(title: 'Opinion', category: 'Navigation', route: _Routes.opinion),
-    const _SearchEntry(title: 'Portrait', category: 'Navigation', route: _Routes.portrait),
-    const _SearchEntry(title: 'Lieux', category: 'Navigation', route: _Routes.lieux),
-    const _SearchEntry(title: 'Style', category: 'Navigation', route: _Routes.style),
-    const _SearchEntry(title: 'Communaut\u00E9', category: 'Navigation', route: _Routes.community),
+    const _SearchEntry(
+        title: 'Accueil', category: 'Navigation', route: _Routes.home),
+    const _SearchEntry(
+        title: 'Opinion', category: 'Navigation', route: _Routes.opinion),
+    const _SearchEntry(
+        title: 'Portrait', category: 'Navigation', route: _Routes.portrait),
+    const _SearchEntry(
+        title: 'Lieux', category: 'Navigation', route: _Routes.lieux),
+    const _SearchEntry(
+        title: 'Style', category: 'Navigation', route: _Routes.style),
+    const _SearchEntry(
+        title: 'Communaut\u00E9',
+        category: 'Navigation',
+        route: _Routes.community),
     const _SearchEntry(title: 'FAQ', category: 'Support', route: _Routes.faq),
-    const _SearchEntry(title: 'Politique de confidentialit\u00E9', category: 'Support', route: _Routes.privacy),
-    const _SearchEntry(title: 'A propos de nous', category: 'Institutionnel', route: _Routes.about),
-    const _SearchEntry(title: 'Partenariat', category: 'Business', route: _Routes.partners),
+    const _SearchEntry(
+        title: 'Politique de confidentialit\u00E9',
+        category: 'Support',
+        route: _Routes.privacy),
+    const _SearchEntry(
+        title: 'A propos de nous',
+        category: 'Institutionnel',
+        route: _Routes.about),
+    const _SearchEntry(
+        title: 'Partenariat', category: 'Business', route: _Routes.partners),
   ];
 
   for (final article in _lieuxArticles) {
-    entries.add(_SearchEntry(title: article.title, category: 'Lieux', route: _Routes.lieux));
+    entries.add(_SearchEntry(
+        title: article.title, category: 'Lieux', route: _Routes.lieux));
   }
   for (final article in _styleArticles) {
-    entries.add(_SearchEntry(title: article.title, category: 'Style', route: _Routes.style));
+    entries.add(_SearchEntry(
+        title: article.title, category: 'Style', route: _Routes.style));
   }
 
   return entries;
@@ -226,7 +320,8 @@ class KaalisApp extends StatefulWidget {
 }
 
 class _KaalisAppState extends State<KaalisApp> {
-  late final NewsletterController _newsletterController = NewsletterController();
+  late final NewsletterController _newsletterController =
+      NewsletterController();
 
   @override
   void dispose() {
@@ -237,7 +332,8 @@ class _KaalisAppState extends State<KaalisApp> {
   @override
   Widget build(BuildContext context) {
     final theme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: kaalisPrimary, primary: kaalisPrimary),
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: kaalisPrimary, primary: kaalisPrimary),
       fontFamily: _ppAcmaFamily,
       textTheme: ThemeData.light().textTheme.apply(
             fontFamily: _ppAcmaFamily,
@@ -265,11 +361,21 @@ class _KaalisAppState extends State<KaalisApp> {
           _Routes.privacy: (context) => const PrivacyPage(),
           _Routes.about: (context) => const AboutPage(),
           _Routes.partners: (context) => const PartnersPage(),
-          _Routes.socialTiktok: (context) => const SocialPage(title: 'TikTok', message: 'Retrouvez nos dernières vidéos TikTok bientôt disponibles.'),
-          _Routes.socialFacebook: (context) => const SocialPage(title: 'Facebook', message: 'La page Facebook Kaalis est en cours de préparation.'),
-          _Routes.socialInstagram: (context) => const SocialPage(title: 'Instagram', message: 'Découvrez bientôt notre univers Instagram.'),
-          _Routes.socialX: (context) => const SocialPage(title: 'X', message: 'Nos actualités X arrivent très vite.'),
-          _Routes.socialYoutube: (context) => const SocialPage(title: 'Youtube', message: 'Les formats vidéo Youtube Kaalis sont en production.'),
+          _Routes.socialTiktok: (context) => const SocialPage(
+              title: 'TikTok',
+              message:
+                  'Retrouvez nos dernières vidéos TikTok bientôt disponibles.'),
+          _Routes.socialFacebook: (context) => const SocialPage(
+              title: 'Facebook',
+              message: 'La page Facebook Kaalis est en cours de préparation.'),
+          _Routes.socialInstagram: (context) => const SocialPage(
+              title: 'Instagram',
+              message: 'Découvrez bientôt notre univers Instagram.'),
+          _Routes.socialX: (context) => const SocialPage(
+              title: 'X', message: 'Nos actualités X arrivent très vite.'),
+          _Routes.socialYoutube: (context) => const SocialPage(
+              title: 'Youtube',
+              message: 'Les formats vidéo Youtube Kaalis sont en production.'),
         },
         builder: (context, child) {
           return Stack(
@@ -284,9 +390,16 @@ class _KaalisAppState extends State<KaalisApp> {
   }
 }
 
-List<Widget> _buildPageSlivers({required String activeRoute, required List<Widget> body, Color? headerBackground}) {
+List<Widget> _buildPageSlivers(
+    {required String activeRoute,
+    required List<Widget> body,
+    Color? headerBackground,
+    bool includeHeader = true}) {
   return [
-    SliverToBoxAdapter(child: _Header(activeRoute: activeRoute, backgroundColor: headerBackground)),
+    if (includeHeader)
+      SliverToBoxAdapter(
+          child: _Header(
+              activeRoute: activeRoute, backgroundColor: headerBackground)),
     ...body.map((widget) => SliverToBoxAdapter(child: widget)),
     SliverToBoxAdapter(child: const _Footer()),
   ];
@@ -306,7 +419,9 @@ class HomePage extends StatelessWidget {
             const _Hero(), // Hero margins/padding define the first large white space block.
             const _SectionDivider(), // Divider widget solely inserts vertical breathing room + rule.
             SectionOpinion(), // Section widget manages its own internal spacing between cards/titles.
-            const _SectionDivider(), // Gap between Opinion and Portrait blocks.
+            const _SectionDivider(
+                topSpacing: _heroOpinionDividerTop,
+                bottomSpacing: _heroOpinionDividerBottom), // Gap between Opinion and Portrait blocks.
             SectionPortrait(), // Portrait content includes spacing for featured list.
             const _SectionDivider(), // Gap before curated choices.
             SectionChoix(), // Choix grid handles its internal white space.
@@ -342,8 +457,6 @@ class _Container extends StatelessWidget {
     );
   }
 }
-
-
 
 class _Header extends StatelessWidget {
   final String? activeRoute;
@@ -403,17 +516,23 @@ class _Header extends StatelessWidget {
                     for (var i = 0; i < _navLinks.length; i++) ...[
                       GestureDetector(
                         onTap: () {
-                          final current = ModalRoute.of(context)?.settings.name ?? _Routes.home;
+                          final current =
+                              ModalRoute.of(context)?.settings.name ??
+                                  _Routes.home;
                           if (current == _navLinks[i].route) return;
-                          Navigator.of(context).pushReplacementNamed(_navLinks[i].route);
+                          Navigator.of(context)
+                              .pushReplacementNamed(_navLinks[i].route);
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 6),
                           child: Text(
                             _navLinks[i].label,
-                            style: _ppAcma(TextStyle(
+                            style: _ppAcma(
+                              TextStyle(
                                 fontSize: fontSize,
-                                fontWeight: activeRoute == _navLinks[i].route ? FontWeight.w800 : FontWeight.w600,
+                                fontWeight: activeRoute == _navLinks[i].route
+                                    ? FontWeight.w800
+                                    : FontWeight.w600,
                                 letterSpacing: 0.5,
                                 color: kaalisPrimary,
                               ),
@@ -428,22 +547,36 @@ class _Header extends StatelessWidget {
               ),
             );
 
-            Widget brand = _HeaderBrand(activeRoute: activeRoute, fontSize: isCompact ? 84 : 104);
+            Widget brand = _HeaderBrand(
+                activeRoute: activeRoute, fontSize: isCompact ? 84 : 104);
 
-            Widget actions = Row(
+            Widget searchButton({double width = 260}) =>
+                _HeaderSearchButton(onTap: () => _openSearch(context), width: width);
+
+            final searchWidth = isTight ? 220.0 : 260.0;
+            final iconSpacing = isTight ? 16.0 : 24.0;
+            final iconSpacingSecondary = isTight ? 20.0 : 32.0;
+            final bookmarkSize = isTight ? 36.0 : 44.0;
+            final logoSize = isTight ? 68.0 : 92.0;
+            final logoOffset = isTight ? 4.0 : 6.0;
+            final actionRow = Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _HeaderSearchButton(onTap: () => _openSearch(context)),
-                const SizedBox(width: 24),
-                const Icon(Icons.bookmark_border, size: 32, color: kaalisPrimary),
-                const SizedBox(width: 24),
-                Image.asset(
-                  'assets/logo.png',
-                  color: kaalisPrimary,
-                  width: 62,
-                  height: 62,
-                  filterQuality: FilterQuality.high,
+                searchButton(width: searchWidth),
+                SizedBox(width: iconSpacing),
+                Icon(Icons.bookmark_border,
+                    size: bookmarkSize, color: kaalisPrimary),
+                SizedBox(width: iconSpacingSecondary),
+                Padding(
+                  padding: EdgeInsets.only(top: logoOffset),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    color: kaalisPrimary,
+                    width: logoSize,
+                    height: logoSize,
+                    filterQuality: FilterQuality.high,
+                  ),
                 ),
               ],
             );
@@ -459,7 +592,9 @@ class _Header extends StatelessWidget {
                           children: [
                             Expanded(child: brand),
                             const SizedBox(width: 24),
-                            Flexible(child: FittedBox(fit: BoxFit.scaleDown, child: actions)),
+                            Flexible(
+                                child: FittedBox(
+                                    fit: BoxFit.scaleDown, child: actionRow)),
                           ],
                         ),
                         const SizedBox(height: 28),
@@ -470,11 +605,27 @@ class _Header extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(child: navLinks),
-                        brand,
+                        Expanded(child: Center(child: brand)),
                         Expanded(
-                          child: Align(
-                            alignment: Alignment.centerRight,
-                            child: actions,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              searchButton(width: searchWidth),
+                              const Spacer(),
+                              Icon(Icons.bookmark_border,
+                                  size: bookmarkSize, color: kaalisPrimary),
+                              SizedBox(width: iconSpacingSecondary),
+                              Padding(
+                                padding: EdgeInsets.only(top: logoOffset),
+                                child: Image.asset(
+                                  'assets/logo.png',
+                                  color: kaalisPrimary,
+                                  width: logoSize,
+                                  height: logoSize,
+                                  filterQuality: FilterQuality.high,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -485,7 +636,9 @@ class _Header extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 content,
-                Container(height: 3, width: double.infinity, color: kaalisPrimary),
+                const SizedBox(height: 20),
+                Container(
+                    height: 3, width: double.infinity, color: kaalisPrimary),
               ],
             );
           },
@@ -497,7 +650,8 @@ class _Header extends StatelessWidget {
 
 class _HeaderSearchButton extends StatelessWidget {
   final VoidCallback onTap;
-  const _HeaderSearchButton({required this.onTap});
+  final double width;
+  const _HeaderSearchButton({required this.onTap, this.width = 260});
 
   @override
   Widget build(BuildContext context) {
@@ -508,19 +662,22 @@ class _HeaderSearchButton extends StatelessWidget {
         minimumSize: Size.zero,
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: kaalisPrimary,
-        overlayColor: kaalisPrimary.withValues(alpha: 0.08),
+        overlayColor: Colors.transparent,
+        splashFactory: NoSplash.splashFactory,
       ),
       child: SizedBox(
-        height: 42,
+        width: width,
+        height: 54,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Rechercher',
-              style: _ppAcma(const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+              style: _ppAcma(
+                const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 0.4,
                   color: kaalisPrimary,
                 ),
@@ -528,8 +685,8 @@ class _HeaderSearchButton extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Container(
-              width: 168,
-              height: 2,
+              width: width,
+              height: 3,
               color: kaalisPrimary,
             ),
           ],
@@ -555,7 +712,8 @@ class _HeaderBrand extends StatelessWidget {
   Widget build(BuildContext context) {
     final text = Text(
       'Kaalis',
-      style: _ppAcma(TextStyle(
+      style: _ppAcma(
+        TextStyle(
           color: kaalisPrimary,
           fontWeight: FontWeight.w500,
           fontSize: fontSize,
@@ -615,7 +773,8 @@ class _OpinionPageState extends State<OpinionPage> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const _AsyncSectionLoading(message: 'Chargement des articles Opinion…');
+            return const _AsyncSectionLoading(
+                message: 'Chargement des articles Opinion…');
           }
           if (snapshot.hasError) {
             return const _SectionPlaceholder(
@@ -667,7 +826,8 @@ class _PortraitPageState extends State<PortraitPage> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const _AsyncSectionLoading(message: 'Chargement des portraits…');
+            return const _AsyncSectionLoading(
+                message: 'Chargement des portraits…');
           }
           if (snapshot.hasError) {
             return const _SectionPlaceholder(
@@ -689,7 +849,8 @@ class _PortraitPageState extends State<PortraitPage> {
               activeRoute: _Routes.portrait,
               body: [
                 _PortraitHero(feature: hero),
-                for (final feature in secondary) _PortraitSplit(feature: feature),
+                for (final feature in secondary)
+                  _PortraitSplit(feature: feature),
                 const _SectionDivider(),
               ],
             ),
@@ -768,7 +929,8 @@ class FAQPage extends StatelessWidget {
     return const _InfoScaffold(
       route: _Routes.faq,
       title: 'FAQ',
-      message: 'Toutes les réponses aux questions fréquentes seront publiées très bientôt.',
+      message:
+          'Toutes les réponses aux questions fréquentes seront publiées très bientôt.',
     );
   }
 }
@@ -839,7 +1001,8 @@ class _AboutSection extends StatelessWidget {
           Text(
             'A propos de nous',
             textAlign: TextAlign.center,
-            style: _ppAcma(TextStyle(
+            style: _ppAcma(
+              TextStyle(
                 fontSize: titleSize,
                 fontWeight: FontWeight.w700,
                 color: kaalisPrimary,
@@ -853,7 +1016,8 @@ class _AboutSection extends StatelessWidget {
             child: Text(
               '"Red\u00E9finir le m\u00E9dia \u00E0 l\u2019ivoirienne"',
               textAlign: TextAlign.center,
-              style: _ppAcma(TextStyle(
+              style: _ppAcma(
+                TextStyle(
                   fontSize: quoteSize,
                   fontWeight: FontWeight.w700,
                   height: 1.1,
@@ -880,8 +1044,7 @@ class _AboutSection extends StatelessWidget {
                   TextSpan(
                     children: const [
                       TextSpan(
-                        text:
-                            'Notre identit\u00E9 puise dans le symbole ',
+                        text: 'Notre identit\u00E9 puise dans le symbole ',
                       ),
                       TextSpan(
                         text: 'Bese Saka',
@@ -936,7 +1099,8 @@ class _InfoScaffold extends StatelessWidget {
   final String route;
   final String title;
   final String message;
-  const _InfoScaffold({required this.route, required this.title, required this.message});
+  const _InfoScaffold(
+      {required this.route, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -986,7 +1150,8 @@ class _PartnersScaffoldState extends State<_PartnersScaffold> {
             slivers: _buildPageSlivers(
               activeRoute: _Routes.partners,
               body: [
-                _PartnersContent(future: _partnersFuture, onContactTap: _openContact),
+                _PartnersContent(
+                    future: _partnersFuture, onContactTap: _openContact),
                 const _SectionDivider(),
               ],
             ),
@@ -1009,12 +1174,14 @@ class _PartnersContent extends StatelessWidget {
       future: future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const _AsyncSectionLoading(message: 'Chargement des opportunités…');
+          return const _AsyncSectionLoading(
+              message: 'Chargement des opportunités…');
         }
         if (snapshot.hasError) {
           return _SectionPlaceholder(
             title: 'Partenariats',
-            message: 'Impossible de récupérer les opportunités (${snapshot.error}).',
+            message:
+                'Impossible de récupérer les opportunités (${snapshot.error}).',
           );
         }
         final sections = snapshot.data;
@@ -1058,7 +1225,8 @@ class _AsyncSectionLoading extends StatelessWidget {
           const SizedBox(
             height: 80,
             width: 80,
-            child: CircularProgressIndicator(strokeWidth: 5, color: kaalisPrimary),
+            child:
+                CircularProgressIndicator(strokeWidth: 5, color: kaalisPrimary),
           ),
           const SizedBox(height: 24),
           Text(
@@ -1142,12 +1310,12 @@ class _PartnerContentBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleSize = data.primary
-        ? (isWide ? 64.0 : 44.0)
-        : (isWide ? 48.0 : 36.0);
+    final titleSize =
+        data.primary ? (isWide ? 64.0 : 44.0) : (isWide ? 48.0 : 36.0);
     final titleWidget = Text(
       data.title,
-      style: _ppAcma(TextStyle(
+      style: _ppAcma(
+        TextStyle(
           fontSize: titleSize,
           height: 1.05,
           fontWeight: FontWeight.w700,
@@ -1174,14 +1342,16 @@ class _PartnerContentBlock extends StatelessWidget {
                       padding: EdgeInsets.only(top: 4),
                       child: Text(
                         '•',
-                        style: TextStyle(color: Color(0xFF3A3A3A), fontSize: 16),
+                        style:
+                            TextStyle(color: Color(0xFF3A3A3A), fontSize: 16),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         bullet,
-                        style: _ppAcma(const TextStyle(
+                        style: _ppAcma(
+                          const TextStyle(
                             fontSize: 16,
                             height: 1.45,
                             color: Color(0xFF3A3A3A),
@@ -1241,7 +1411,8 @@ class _PartnerCTAState extends State<_PartnerCTA> {
           ),
           child: Text(
             'Contacter l’équipe',
-            style: _ppAcma(TextStyle(
+            style: _ppAcma(
+              TextStyle(
                 fontWeight: FontWeight.w700,
                 color: foreground,
               ),
@@ -1306,7 +1477,8 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Merci ! Nous revenons vers vous rapidement.')),
+        const SnackBar(
+            content: Text('Merci ! Nous revenons vers vous rapidement.')),
       );
       _handleClose();
     }
@@ -1336,7 +1508,8 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
       children: [
         Text(
           label,
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontWeight: FontWeight.w600,
               color: Colors.white,
             ),
@@ -1351,7 +1524,8 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
           cursorColor: Colors.black87,
           style: const TextStyle(color: Color(0xFF111111)),
           decoration: _inputDecoration(),
-          validator: (value) => (value?.trim().isEmpty ?? true) ? 'Champ requis' : null,
+          validator: (value) =>
+              (value?.trim().isEmpty ?? true) ? 'Champ requis' : null,
         ),
       ],
     );
@@ -1372,7 +1546,8 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
               child: Focus(
                 autofocus: true,
                 onKeyEvent: (node, event) {
-                  if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
+                  if (event is KeyDownEvent &&
+                      event.logicalKey == LogicalKeyboardKey.escape) {
                     _handleClose();
                     return KeyEventResult.handled;
                   }
@@ -1394,16 +1569,17 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  'Remplir la fiche contact',
-                                  style: _ppAcma(const TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.white,
+                                  Text(
+                                    'Remplir la fiche contact',
+                                    style: _ppAcma(
+                                      const TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 18),
+                                  const SizedBox(height: 18),
                                 _buildField(
                                   label: 'Prénom et NOM',
                                   controller: _nameController,
@@ -1436,8 +1612,10 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFF0B2A78),
                                     foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                    textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 12),
+                                    textStyle: const TextStyle(
+                                        fontWeight: FontWeight.w700),
                                   ),
                                   onPressed: _submit,
                                   child: const Text('Envoyer'),
@@ -1451,7 +1629,8 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
                           right: 8,
                           child: IconButton(
                             onPressed: _handleClose,
-                            icon: const Icon(Icons.close, color: Colors.white, size: 26),
+                            icon: const Icon(Icons.close,
+                                color: Colors.white, size: 26),
                             tooltip: 'Fermer',
                           ),
                         ),
@@ -1467,6 +1646,7 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
     );
   }
 }
+
 class _PrivacyScaffold extends StatelessWidget {
   const _PrivacyScaffold();
 
@@ -1567,7 +1747,8 @@ class _PrivacyContent extends StatelessWidget {
                 child: Text(
                   'Politique de Confidentialité',
                   softWrap: false,
-                  style: _ppAcma(TextStyle(
+                  style: _ppAcma(
+                    TextStyle(
                       fontSize: titleSize,
                       fontWeight: FontWeight.w700,
                       color: const Color(0xFF111111),
@@ -1579,7 +1760,8 @@ class _PrivacyContent extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 'Kaalis Magazine respecte votre vie privée et s’engage à protéger vos données personnelles.',
-                style: _ppAcma(const TextStyle(
+                style: _ppAcma(
+                  const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: kaalisPrimary,
@@ -1590,7 +1772,8 @@ class _PrivacyContent extends StatelessWidget {
               for (final section in _sections) ...[
                 Text(
                   section.title,
-                  style: _ppAcma(const TextStyle(
+                  style: _ppAcma(
+                    const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF1A1A1A),
@@ -1601,7 +1784,8 @@ class _PrivacyContent extends StatelessWidget {
                 for (final paragraph in section.paragraphs) ...[
                   Text(
                     paragraph,
-                    style: _ppAcma(const TextStyle(
+                    style: _ppAcma(
+                      const TextStyle(
                         fontSize: 15,
                         color: Color(0xFF3A3A3A),
                         height: 1.55,
@@ -1620,11 +1804,14 @@ class _PrivacyContent extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('• ', style: TextStyle(color: Color(0xFF3A3A3A), fontSize: 15)),
+                              const Text('• ',
+                                  style: TextStyle(
+                                      color: Color(0xFF3A3A3A), fontSize: 15)),
                               Expanded(
                                 child: Text(
                                   bullet,
-                                  style: _ppAcma(const TextStyle(
+                                  style: _ppAcma(
+                                    const TextStyle(
                                       fontSize: 15,
                                       color: Color(0xFF3A3A3A),
                                       height: 1.5,
@@ -1644,7 +1831,8 @@ class _PrivacyContent extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 'Dernière mise à jour : 07/11/2025',
-                style: _ppAcma(const TextStyle(
+                style: _ppAcma(
+                  const TextStyle(
                     fontSize: 13,
                     color: kaalisMuted,
                   ),
@@ -1664,11 +1852,15 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Container(
-      padding: const EdgeInsets.symmetric(horizontal: 48), // Page gutter keeps the hero away from screen edges.
+      padding: const EdgeInsets.symmetric(
+          horizontal: 48), // Page gutter keeps the hero away from screen edges.
       maxWidth: double.infinity,
       child: Container(
-        margin: const EdgeInsets.only(top: 96, bottom: 128), // Top/bottom margin creates white space around the hero block.
-        height: 540,
+        margin: const EdgeInsets.only(
+            top: 96,
+            bottom:
+                128), // Top/bottom margin creates white space around the hero block.
+        height: 720,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
@@ -1677,14 +1869,16 @@ class _Hero extends StatelessWidget {
           ),
           border: Border.all(color: Color(0xFFE7E7E7)),
         ),
-        padding: const EdgeInsets.fromLTRB(96, 144, 96, 128), // Internal padding spaces the headline away from the border.
+        padding: const EdgeInsets.fromLTRB(96, 144, 96,
+            128), // Internal padding spaces the headline away from the border.
         alignment: Alignment.bottomLeft,
         child: RichText(
           text: TextSpan(
             children: [
               TextSpan(
                 text: 'A la Une :\n',
-                style: _ppAcma(const TextStyle(
+                style: _ppAcma(
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: 88,
@@ -1694,7 +1888,8 @@ class _Hero extends StatelessWidget {
               ),
               TextSpan(
                 text: 'Article mis en avant',
-                style: _ppAcma(const TextStyle(
+                style: _ppAcma(
+                  const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                     fontSize: 128,
@@ -1711,7 +1906,10 @@ class _Hero extends StatelessWidget {
 }
 
 class _SectionDivider extends StatelessWidget {
-  const _SectionDivider();
+  final double topSpacing;
+  final double bottomSpacing;
+  const _SectionDivider(
+      {this.topSpacing = _sectionSpacing, this.bottomSpacing = _sectionSpacing});
 
   @override
   Widget build(BuildContext context) {
@@ -1721,9 +1919,12 @@ class _SectionDivider extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: _sectionSpacing), // Top buffer before the separator rule.
+          SizedBox(
+              height: topSpacing), // Top buffer before the separator rule.
           Container(height: 3, width: double.infinity, color: kaalisPrimary),
-          const SizedBox(height: _sectionSpacing), // Bottom buffer leading into the next section.
+          SizedBox(
+              height:
+                  bottomSpacing), // Bottom buffer leading into the next section.
         ],
       ),
     );
@@ -1734,7 +1935,8 @@ class SectionHead extends StatelessWidget {
   final String title;
   final String? action;
   final bool showDivider;
-  const SectionHead({super.key, required this.title, this.action, this.showDivider = true});
+  const SectionHead(
+      {super.key, required this.title, this.action, this.showDivider = true});
 
   @override
   Widget build(BuildContext context) {
@@ -1745,8 +1947,12 @@ class SectionHead extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (showDivider) ...[
-            Container(height: 3, color: kaalisPrimary), // Section underline preceding the title.
-            const SizedBox(height: 32), // Breathing room between the rule and the heading text.
+            Container(
+                height: 3,
+                color: kaalisPrimary), // Section underline preceding the title.
+            const SizedBox(
+                height:
+                    32), // Breathing room between the rule and the heading text.
           ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -1754,7 +1960,8 @@ class SectionHead extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: _ppAcma(const TextStyle(
+                  style: _ppAcma(
+                    const TextStyle(
                       color: kaalisPrimary,
                       fontWeight: FontWeight.w700,
                       fontSize: 88,
@@ -1768,7 +1975,8 @@ class SectionHead extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text(
                     action!,
-                    style: _ppAcma(const TextStyle(
+                    style: _ppAcma(
+                      const TextStyle(
                         color: kaalisPrimary,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -1802,7 +2010,8 @@ class _SectionOpinionState extends State<SectionOpinion> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const _AsyncSectionLoading(message: 'Chargement des articles Opinion…');
+          return const _AsyncSectionLoading(
+              message: 'Chargement des articles Opinion…');
         }
         if (snapshot.hasError) {
           return const _SectionPlaceholder(
@@ -1822,8 +2031,8 @@ class _SectionOpinionState extends State<SectionOpinion> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionHead(title: 'Opinion', action: 'Voir Plus', showDivider: false),
-            const SizedBox(height: _sectionSpacing), // Vertical gap between heading and card grid.
+            const SectionHead(title: 'Opinion', showDivider: false),
+            const SizedBox(height: _opinionButtonTopMargin),
             _Container(
               padding: const EdgeInsets.symmetric(horizontal: 48),
               maxWidth: double.infinity,
@@ -1831,33 +2040,69 @@ class _SectionOpinionState extends State<SectionOpinion> {
                 builder: (context, constraints) {
                   const gap = 32.0; // Consistent spacing between opinion cards.
                   final width = constraints.maxWidth;
+                  final columns = width >= 1080 && cards.length >= 3
+                      ? 3
+                      : width >= 720 && cards.length >= 3
+                          ? 2
+                          : 1;
+                  final totalGapWidth = math.max(0.0, (columns - 1) * gap);
+                  final availableWidth = math.max(0.0, width - totalGapWidth);
+                  final cardWidth =
+                      columns > 0 ? availableWidth / columns : width;
+                  final buttonWidth = math.max(0.0, math.min(cardWidth, width));
+
+                  Widget layout;
                   if (width >= 1080 && cards.length >= 3) {
-                    return Row(
+                    layout = Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: _OpinionCard(data: cards[0], isPrimary: true)),
-                        const SizedBox(width: gap), // Horizontal space between primary and secondary cards.
+                        Expanded(
+                            child:
+                                _OpinionCard(data: cards[0], isPrimary: true)),
+                        const SizedBox(
+                            width:
+                                gap), // Horizontal space between primary and secondary cards.
                         Expanded(child: _OpinionCard(data: cards[1])),
-                        const SizedBox(width: gap), // Space between the two secondary cards.
+                        const SizedBox(
+                            width:
+                                gap), // Space between the two secondary cards.
                         Expanded(child: _OpinionCard(data: cards[2])),
                       ],
                     );
-                  }
-
-                  if (width >= 720 && cards.length >= 3) {
-                    return Column(
+                  } else if (width >= 720 && cards.length >= 3) {
+                    layout = Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _OpinionCard(data: cards[0], isPrimary: true),
-                        const SizedBox(height: gap), // Gap between the primary card and the row beneath.
+                        const SizedBox(
+                            height:
+                                gap), // Gap between the primary card and the row beneath.
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(child: _OpinionCard(data: cards[1])),
-                            const SizedBox(width: gap), // Horizontal space between secondary cards.
+                            const SizedBox(
+                                width:
+                                    gap), // Horizontal space between secondary cards.
                             Expanded(child: _OpinionCard(data: cards[2])),
                           ],
                         ),
+                      ],
+                    );
+                  } else {
+                    layout = Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _OpinionCard(data: cards.first, isPrimary: true),
+                        const SizedBox(
+                            height:
+                                gap), // Reuse the same vertical rhythm between stacked cards.
+                        for (final card in cards.skip(1)) ...[
+                          _OpinionCard(data: card),
+                          const SizedBox(
+                              height:
+                                  gap), // Space between each remaining stacked card.
+                        ],
                       ],
                     );
                   }
@@ -1865,12 +2110,41 @@ class _SectionOpinionState extends State<SectionOpinion> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _OpinionCard(data: cards.first, isPrimary: true),
-                      const SizedBox(height: gap), // Reuse the same vertical rhythm between stacked cards.
-                      for (final card in cards.skip(1)) ...[
-                        _OpinionCard(data: card),
-                        const SizedBox(height: gap), // Space between each remaining stacked card.
-                      ],
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: buttonWidth,
+                          child: TextButton(
+                            onPressed: () =>
+                                Navigator.of(context).pushNamed(_Routes.opinion),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.only(
+                                  left: 18, top: 8, bottom: 8, right: 4),
+                              foregroundColor: kaalisPrimary,
+                              textStyle: _ppAcma(
+                                const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.4,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ).copyWith(
+                              overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              splashFactory: NoSplash.splashFactory,
+                            ),
+                            child: const Align(
+                              alignment: Alignment.centerRight,
+                              child: Text("Voir Plus"),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                          height:
+                              _opinionCardHeadingGap), // Vertical gap between heading and card grid.
+                      layout,
                     ],
                   );
                 },
@@ -1890,51 +2164,65 @@ class _OpinionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final aspectRatio = isPrimary ? 4 / 3 : 3 / 2;
-    final titleStyle = _ppAcma(TextStyle(
+    final titleStyle = _ppAcma(
+      TextStyle(
         fontSize: isPrimary ? 28 : 24,
         fontWeight: FontWeight.w800,
         height: 1.25,
       ),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+    return SizedBox(
+      height: _opinionCardHeight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
         AspectRatio(
-          aspectRatio: aspectRatio,
-          child: ClipRRect(
+          aspectRatio: _opinionCardImageAspectRatio,
+          child: _CardPlaceholder(
             borderRadius: const BorderRadius.all(Radius.circular(4)),
-            child: Image.network(
-              data.imageUrl,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFFE0E0E0)),
-            ),
+            icon: Icons.newspaper_outlined,
           ),
         ),
-        const SizedBox(height: 20), // Space between the image and the title.
-        Text(data.title, style: titleStyle),
-        const SizedBox(height: 8), // Compact gap before the meta/date line.
-        Text(
-          data.date,
-          style: _ppAcma(const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF9A9A9A),
-              letterSpacing: 0.4,
+          const SizedBox(height: 20), // Space between the image and the title.
+          Text('titres', style: titleStyle),
+          const SizedBox(height: 8), // Compact gap before the meta/date line.
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  data.date,
+                  style: _ppAcma(
+                    const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF9A9A9A),
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                    height:
+                        12), // Breathing room before the description paragraph.
+                Expanded(
+                  child: Text(
+                    'description',
+                    maxLines: _opinionCardDescriptionMaxLines,
+                    overflow: TextOverflow.ellipsis,
+                    style: _ppAcma(
+                      const TextStyle(
+                        fontSize: 15,
+                        color: Color(0xFF6A6A6A),
+                        height: 1.55,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-        ),
-        const SizedBox(height: 12), // Breathing room before the description paragraph.
-        Text(
-          data.description,
-          style: _ppAcma(const TextStyle(
-              fontSize: 15,
-              color: Color(0xFF6A6A6A),
-              height: 1.55,
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1960,17 +2248,18 @@ class _OpinionHero extends StatelessWidget {
               } else if (width < 1000) {
                 fontSize = 64;
               }
-              return Text(
-                article.title,
-                textAlign: TextAlign.center,
-                style: _ppAcma(TextStyle(
-                    color: const Color(0xFF131313),
-                    fontWeight: FontWeight.w600,
-                    fontSize: fontSize,
-                    height: 1,
+                return Text(
+                  'Titre',
+                  textAlign: TextAlign.center,
+                  style: _ppAcma(
+                    TextStyle(
+                      color: const Color(0xFF131313),
+                      fontWeight: FontWeight.w600,
+                      fontSize: fontSize,
+                      height: 1,
+                    ),
                   ),
-                ),
-              );
+                );
             },
           ),
           const SizedBox(height: 12),
@@ -1982,7 +2271,8 @@ class _OpinionHero extends StatelessWidget {
                   children: [
                     Text(
                       article.date,
-                      style: _ppAcma(const TextStyle(
+                      style: _ppAcma(
+                        const TextStyle(
                           fontSize: 12,
                           color: Color(0xFF7C7C7C),
                         ),
@@ -2002,7 +2292,8 @@ class _OpinionHero extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         article.date,
-                        style: _ppAcma(const TextStyle(
+                        style: _ppAcma(
+                          const TextStyle(
                             fontSize: 12,
                             color: Color(0xFF7C7C7C),
                           ),
@@ -2023,23 +2314,10 @@ class _OpinionHero extends StatelessWidget {
           const SizedBox(height: 18),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: ClipRRect(
+            child: _CardPlaceholder(
               borderRadius: const BorderRadius.all(Radius.circular(2)),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(color: const Color(0xFFE8E8E8));
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFE8E8E8),
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.image_outlined, size: 48, color: Color(0xFFB0B0B0)),
-                  );
-                },
-              ),
+              icon: Icons.image_outlined,
+              iconSize: 56,
             ),
           ),
         ],
@@ -2094,29 +2372,16 @@ class _OpinionGridCard extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: ClipRRect(
+          child: _CardPlaceholder(
             borderRadius: const BorderRadius.all(Radius.circular(2)),
-            child: Image.network(
-              article.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(color: const Color(0xFFE8E8E8));
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: const Color(0xFFE8E8E8),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.image_outlined, size: 40, color: Color(0xFFB0B0B0)),
-                );
-              },
-            ),
+            icon: Icons.newspaper_outlined,
           ),
         ),
         const SizedBox(height: 14),
         Text(
           article.date,
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 12,
               color: Color(0xFF7C7C7C),
               letterSpacing: 0.3,
@@ -2125,8 +2390,9 @@ class _OpinionGridCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          article.title,
-          style: _ppAcma(const TextStyle(
+          'Titre',
+          style: _ppAcma(
+            const TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
               fontSize: 32,
@@ -2151,7 +2417,8 @@ class _ReadMoreLink extends StatelessWidget {
       onTap: onTap,
       child: Text(
         'Lire Plus',
-        style: _ppAcma(const TextStyle(
+        style: _ppAcma(
+          const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             decoration: TextDecoration.underline,
@@ -2184,10 +2451,11 @@ class _PortraitHero extends StatelessWidget {
               } else if (width < 1000) {
                 fontSize = 64;
               }
-              return Text(
-                feature.title,
+               return Text(
+                 'Titre',
                 textAlign: TextAlign.center,
-                style: _ppAcma(TextStyle(
+                style: _ppAcma(
+                  TextStyle(
                     color: const Color(0xFF131313),
                     fontWeight: FontWeight.w600,
                     fontSize: fontSize,
@@ -2206,7 +2474,8 @@ class _PortraitHero extends StatelessWidget {
                   children: [
                     Text(
                       feature.date,
-                      style: _ppAcma(const TextStyle(
+                      style: _ppAcma(
+                        const TextStyle(
                           fontSize: 12,
                           color: kaalisMuted,
                         ),
@@ -2218,26 +2487,42 @@ class _PortraitHero extends StatelessWidget {
                 );
               }
 
-              return Row(
+              return Column(
                 children: [
-                  const Expanded(child: SizedBox()),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        feature.date,
-                        style: _ppAcma(const TextStyle(
-                            fontSize: 12,
-                            color: kaalisMuted,
+                  Row(
+                    children: [
+                      const Expanded(child: SizedBox()),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            feature.date,
+                            style: _ppAcma(
+                              const TextStyle(
+                                fontSize: 12,
+                                color: kaalisMuted,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: _ReadMoreLink(onTap: () {}),
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: _ReadMoreLink(onTap: () {}),
+                  const SizedBox(height: 8),
+                  Text(
+                    'description',
+                    style: _ppAcma(
+                      const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xFF6A6A6A),
+                      ),
                     ),
                   ),
                 ],
@@ -2285,7 +2570,8 @@ class _PortraitSplit extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(2)),
               child: AspectRatio(
                 aspectRatio: aspect,
-                child: _PortraitImage(url: feature.imageUrl, grayscale: feature.grayscale),
+                child: _PortraitImage(
+                    url: feature.imageUrl, grayscale: feature.grayscale),
               ),
             );
 
@@ -2338,7 +2624,8 @@ class _PortraitDetails extends StatelessWidget {
         children: [
           Text(
             feature.date,
-            style: _ppAcma(const TextStyle(
+            style: _ppAcma(
+              const TextStyle(
                 fontSize: 12,
                 color: kaalisMuted,
               ),
@@ -2346,8 +2633,9 @@ class _PortraitDetails extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            feature.title,
-            style: _ppAcma(TextStyle(
+            'Titre',
+            style: _ppAcma(
+              TextStyle(
                 fontSize: titleSize,
                 fontWeight: FontWeight.w600,
                 height: 1.1,
@@ -2355,7 +2643,18 @@ class _PortraitDetails extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          Text(
+            'description',
+            style: _ppAcma(
+              const TextStyle(
+                fontSize: 17,
+                color: Color(0xFF6A6A6A),
+                height: 1.4,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           _ReadMoreLink(onTap: () {}),
         ],
       ),
@@ -2370,27 +2669,14 @@ class _PortraitImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget image = Image.network(
-      url,
-      fit: BoxFit.cover,
-      loadingBuilder: (context, child, progress) {
-        if (progress == null) return child;
-        return Container(color: const Color(0xFFE8E8E8));
-      },
-      errorBuilder: (context, error, stackTrace) {
-        return Container(
-          color: const Color(0xFFE8E8E8),
-          alignment: Alignment.center,
-          child: const Icon(Icons.person_outline, size: 48, color: Color(0xFFB0B0B0)),
-        );
-      },
-    );
-
+    final placeholder = _CardPlaceholder(icon: Icons.person_outline);
     if (grayscale) {
-      image = ColorFiltered(colorFilter: const ColorFilter.matrix(_grayscaleMatrix), child: image);
+      return ColorFiltered(
+          colorFilter: const ColorFilter.matrix(_grayscaleMatrix),
+          child: placeholder);
     }
 
-    return image;
+    return placeholder;
   }
 }
 
@@ -2410,7 +2696,8 @@ class _SectionPortraitState extends State<SectionPortrait> {
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const _AsyncSectionLoading(message: 'Chargement des portraits…');
+          return const _AsyncSectionLoading(
+              message: 'Chargement des portraits…');
         }
         if (snapshot.hasError) {
           return const _SectionPlaceholder(
@@ -2430,22 +2717,55 @@ class _SectionPortraitState extends State<SectionPortrait> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SectionHead(title: 'Portrait', action: 'Voir Plus', showDivider: false),
-            const SizedBox(height: _sectionSpacing), // Separate the heading from the spotlight cards.
+            const SizedBox(height: _portraitHeadingTopMargin),
+            const SectionHead(title: 'Portrait', showDivider: false),
+            const SizedBox(height: _portraitButtonTopMargin),
             _Container(
-              padding: const EdgeInsets.fromLTRB(48, 64, 48, 56), // Extra vertical padding creates top/bottom white space.
+              padding: const EdgeInsets.fromLTRB(48, 64, 48,
+                  56), // Extra vertical padding creates top/bottom white space.
               maxWidth: double.infinity,
               child: LayoutBuilder(
                 builder: (context, c) {
                   const gap = 32.0; // Shared spacing between portrait cards.
-                  final isWide = c.maxWidth >= 900 && cards.length >= 2;
+                  final width = c.maxWidth;
+                  final columns = width >= 900 && cards.length >= 2 ? 2 : 1;
+                  final totalGapWidth = math.max(0.0, (columns - 1) * gap);
+                  final availableWidth = math.max(0.0, width - totalGapWidth);
+                  final cardWidth =
+                      columns > 0 ? availableWidth / columns : width;
+                  final buttonWidth =
+                      math.max(0.0, math.min(cardWidth, width));
+
+                  Widget layout;
+                  final isWide = columns == 2;
                   if (isWide) {
-                    return Row(
+                    layout = Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: _buildSpotlightCard(cards[0], wide: true, isPrimary: true)),
-                        const SizedBox(width: gap), // Horizontal room between the two wide cards.
-                        Expanded(child: _buildSpotlightCard(cards[1], wide: true, isPrimary: false)),
+                        Expanded(
+                            child: _buildSpotlightCard(cards[0],
+                                wide: true, isPrimary: true)),
+                        const SizedBox(
+                            width:
+                                gap), // Horizontal room between the two wide cards.
+                        Expanded(
+                            child: _buildSpotlightCard(cards[1],
+                                wide: true, isPrimary: false)),
+                      ],
+                    );
+                  } else {
+                    layout = Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSpotlightCard(cards[0],
+                            wide: false, isPrimary: true),
+                        if (cards.length > 1) ...[
+                          const SizedBox(
+                              height:
+                                  gap), // Gap before the secondary stacked card.
+                          _buildSpotlightCard(cards[1],
+                              wide: false, isPrimary: false),
+                        ],
                       ],
                     );
                   }
@@ -2453,11 +2773,41 @@ class _SectionPortraitState extends State<SectionPortrait> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildSpotlightCard(cards[0], wide: false, isPrimary: true),
-                      if (cards.length > 1) ...[
-                        const SizedBox(height: gap), // Gap before the secondary stacked card.
-                        _buildSpotlightCard(cards[1], wide: false, isPrimary: false),
-                      ],
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: SizedBox(
+                          width: buttonWidth,
+                          child: TextButton(
+                            onPressed: () =>
+                                Navigator.of(context).pushNamed(_Routes.portrait),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 22, vertical: 8),
+                              foregroundColor: kaalisPrimary,
+                              textStyle: _ppAcma(
+                                const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.4,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ).copyWith(
+                              overlayColor:
+                                  MaterialStateProperty.all(Colors.transparent),
+                              splashFactory: NoSplash.splashFactory,
+                            ),
+                            child: const Align(
+                              alignment: Alignment.centerRight,
+                              child: Text("Voir Plus"),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                          height:
+                              _portraitCardHeadingGap), // Vertical gap between the button and the cards.
+                      layout,
                     ],
                   );
                 },
@@ -2469,71 +2819,46 @@ class _SectionPortraitState extends State<SectionPortrait> {
     );
   }
 
-  Widget _buildSpotlightCard(PortraitSpotlight data, {required bool wide, required bool isPrimary}) {
-    final alignment = isPrimary ? Alignment.centerLeft : Alignment.bottomLeft;
-    final EdgeInsets overlayPadding = isPrimary
-        ? const EdgeInsets.symmetric(horizontal: 26) // Wider hero keeps equal left/right inset.
-        : const EdgeInsets.fromLTRB(26, 0, 26, 26); // Secondary cards reserve bottom padding for the text stack.
+  Widget _buildSpotlightCard(PortraitSpotlight data,
+      {required bool wide, required bool isPrimary}) {
+    final icon = isPrimary ? Icons.person : Icons.photo;
+    final cardRadius = const BorderRadius.all(Radius.circular(2));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AspectRatio(
           aspectRatio: wide ? 16 / 10 : 4 / 3,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                data.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(color: const Color(0xFFEFEFEF)),
-              ),
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0x33000000), Color(0xAA000000)],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: overlayPadding,
-                child: Align(
-                  alignment: alignment,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        data.title,
-                        style: _ppAcma(const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 32,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 8), // Spacing between title and subtitle overlay.
-                      Text(
-                        data.subtitle,
-                        style: _ppAcma(const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 17,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+          child: _CardPlaceholder(
+            borderRadius: cardRadius,
+            icon: icon,
+            iconSize: wide ? 56 : 48,
           ),
         ),
-        const SizedBox(height: 12), // Gap before the date metadata.
+        const SizedBox(height: 12),
+        Text(
+          'titres',
+          style: _ppAcma(
+            const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'description',
+          style: _ppAcma(
+            const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
         Text(
           data.date,
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 12,
               color: kaalisMuted,
               letterSpacing: 0.4,
@@ -2552,11 +2877,14 @@ class SectionChoix extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SectionHead(title: 'Nos Choix du Moment', showDivider: false),
-          const SizedBox(height: _sectionSpacing), // Space between the heading and the featured cards.
+      children: [
+        const SectionHead(title: 'Nos Choix du Moment', showDivider: false),
+        const SizedBox(
+            height:
+                _sectionSpacing), // Space between the heading and the featured cards.
         _Container(
-          padding: const EdgeInsets.symmetric(horizontal: 48), // Keep cards aligned with the page gutter.
+          padding: const EdgeInsets.symmetric(
+              horizontal: 48), // Keep cards aligned with the page gutter.
           maxWidth: double.infinity,
           child: LayoutBuilder(
             builder: (context, c) {
@@ -2568,7 +2896,9 @@ class SectionChoix extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Expanded(flex: 3, child: _ChoixLargeCard()),
-                      const SizedBox(width: 32), // Gap between the large feature and the stacked cards.
+                      const SizedBox(
+                          width:
+                              32), // Gap between the large feature and the stacked cards.
                       Expanded(
                         flex: 2,
                         child: Padding(
@@ -2577,7 +2907,9 @@ class SectionChoix extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: const [
                               _ChoixSmallCard(),
-                              SizedBox(height: 5), // Tight spacing between the small stacked cards on wide screens.
+                              SizedBox(
+                                  height:
+                                      5), // Tight spacing between the small stacked cards on wide screens.
                               _ChoixSmallCard(),
                             ],
                           ),
@@ -2592,9 +2924,13 @@ class SectionChoix extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
                   _ChoixLargeCard(),
-                  SizedBox(height: 24), // Gap before the first small card on narrow screens.
+                  SizedBox(
+                      height:
+                          24), // Gap before the first small card on narrow screens.
                   _ChoixSmallCard(),
-                  SizedBox(height: 24), // Gap between the two stacked small cards on mobile.
+                  SizedBox(
+                      height:
+                          24), // Gap between the two stacked small cards on mobile.
                   _ChoixSmallCard(),
                 ],
               );
@@ -2622,12 +2958,16 @@ class _ChoixLargeCard extends StatelessWidget {
               Container(color: const Color(0xFFEFEFEF)),
               Positioned.fill(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 28), // Keeps the overlay text away from card edges.
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32,
+                      vertical:
+                          28), // Keeps the overlay text away from card edges.
                   child: Align(
                     alignment: Alignment.centerRight,
                     child: Text(
                       'Titre',
-                      style: _ppAcma(const TextStyle(
+                      style: _ppAcma(
+                        const TextStyle(
                           color: Colors.white,
                           fontSize: 40,
                           fontWeight: FontWeight.w700,
@@ -2640,10 +2980,12 @@ class _ChoixLargeCard extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 14), // Space between the image block and metadata.
+        const SizedBox(
+            height: 14), // Space between the image block and metadata.
         Text(
           '22/04/2030',
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 12,
               color: Color(0xFF9A9A9A),
               letterSpacing: 0.4,
@@ -2653,7 +2995,8 @@ class _ChoixLargeCard extends StatelessWidget {
         const SizedBox(height: 8), // Gap before the description snippet.
         Text(
           'Description',
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 15,
               color: Color(0xFF6A6A6A),
               height: 1.45,
@@ -2681,12 +3024,14 @@ class _ChoixSmallCard extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 10), // Gap between image placeholder and metadata row.
+        const SizedBox(
+            height: 10), // Gap between image placeholder and metadata row.
         Row(
           children: [
             Text(
               '22/04/2030',
-              style: _ppAcma(const TextStyle(
+              style: _ppAcma(
+                const TextStyle(
                   fontSize: 12,
                   color: Color(0xFF9A9A9A),
                   letterSpacing: 0.4,
@@ -2697,7 +3042,8 @@ class _ChoixSmallCard extends StatelessWidget {
             const Spacer(),
             Text(
               'Titre',
-              style: _ppAcma(const TextStyle(
+              style: _ppAcma(
+                const TextStyle(
                   color: kaalisPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 20,
@@ -2750,10 +3096,11 @@ class _LieuxHero extends StatelessWidget {
               } else if (width < 1000) {
                 fontSize = 64;
               }
-              return Text(
-                article.title,
-                textAlign: TextAlign.center,
-                style: _ppAcma(TextStyle(
+               return Text(
+                 'Titre',
+                 textAlign: TextAlign.center,
+                  style: _ppAcma(
+                    TextStyle(
                     color: const Color(0xFF131313),
                     fontWeight: FontWeight.w600,
                     fontSize: fontSize,
@@ -2772,7 +3119,8 @@ class _LieuxHero extends StatelessWidget {
                   children: [
                     Text(
                       article.date,
-                      style: _ppAcma(const TextStyle(
+                      style: _ppAcma(
+                        const TextStyle(
                           fontSize: 12,
                           color: kaalisMuted,
                         ),
@@ -2792,7 +3140,8 @@ class _LieuxHero extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         article.date,
-                        style: _ppAcma(const TextStyle(
+                        style: _ppAcma(
+                          const TextStyle(
                             fontSize: 12,
                             color: kaalisMuted,
                           ),
@@ -2813,23 +3162,9 @@ class _LieuxHero extends StatelessWidget {
           const SizedBox(height: 18),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: ClipRRect(
+            child: _CardPlaceholder(
               borderRadius: const BorderRadius.all(Radius.circular(2)),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(color: const Color(0xFFE8E8E8));
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFE8E8E8),
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.place_outlined, size: 48, color: Color(0xFFB0B0B0)),
-                  );
-                },
-              ),
+              icon: Icons.place_outlined,
             ),
           ),
         ],
@@ -2884,29 +3219,16 @@ class _LieuxGridCard extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: ClipRRect(
+          child: _CardPlaceholder(
             borderRadius: const BorderRadius.all(Radius.circular(2)),
-            child: Image.network(
-              article.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                return Container(color: const Color(0xFFE8E8E8));
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: const Color(0xFFE8E8E8),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.place_outlined, size: 40, color: Color(0xFFB0B0B0)),
-                );
-              },
-            ),
+            icon: Icons.place_outlined,
           ),
         ),
         const SizedBox(height: 14),
         Text(
           article.date,
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 12,
               color: kaalisMuted,
               letterSpacing: 0.3,
@@ -2915,8 +3237,9 @@ class _LieuxGridCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          article.title,
-          style: _ppAcma(const TextStyle(
+          'Titre',
+          style: _ppAcma(
+            const TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
               fontSize: 32,
@@ -2952,10 +3275,11 @@ class _StyleHero extends StatelessWidget {
               } else if (width < 1000) {
                 fontSize = 64;
               }
-              return Text(
-                article.title,
-                textAlign: TextAlign.center,
-                style: _ppAcma(TextStyle(
+               return Text(
+                 'Titre',
+                 textAlign: TextAlign.center,
+                style: _ppAcma(
+                  TextStyle(
                     color: const Color(0xFF131313),
                     fontWeight: FontWeight.w600,
                     fontSize: fontSize,
@@ -2974,7 +3298,8 @@ class _StyleHero extends StatelessWidget {
                   children: [
                     Text(
                       article.date,
-                      style: _ppAcma(const TextStyle(
+                      style: _ppAcma(
+                        const TextStyle(
                           fontSize: 12,
                           color: kaalisMuted,
                         ),
@@ -2994,7 +3319,8 @@ class _StyleHero extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         article.date,
-                        style: _ppAcma(const TextStyle(
+                        style: _ppAcma(
+                          const TextStyle(
                             fontSize: 12,
                             color: kaalisMuted,
                           ),
@@ -3015,23 +3341,9 @@ class _StyleHero extends StatelessWidget {
           const SizedBox(height: 18),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: ClipRRect(
+            child: _CardPlaceholder(
               borderRadius: const BorderRadius.all(Radius.circular(2)),
-              child: Image.network(
-                article.imageUrl,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(color: const Color(0xFFE8E8E8));
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFE8E8E8),
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.local_mall_outlined, size: 48, color: Color(0xFFB0B0B0)),
-                  );
-                },
-              ),
+              icon: Icons.local_mall_outlined,
             ),
           ),
         ],
@@ -3138,29 +3450,16 @@ class _StyleGridCard extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: ClipRRect(
+          child: _CardPlaceholder(
             borderRadius: const BorderRadius.all(Radius.circular(2)),
-            child: Image.network(
-              article.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                return Container(color: const Color(0xFFE8E8E8));
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: const Color(0xFFE8E8E8),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.local_mall_outlined, size: 40, color: Color(0xFFB0B0B0)),
-                );
-              },
-            ),
+            icon: Icons.local_mall_outlined,
           ),
         ),
         const SizedBox(height: 14),
         Text(
           article.date,
-          style: _ppAcma(const TextStyle(
+          style: _ppAcma(
+            const TextStyle(
               fontSize: 12,
               color: kaalisMuted,
               letterSpacing: 0.3,
@@ -3169,8 +3468,9 @@ class _StyleGridCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          article.title,
-          style: _ppAcma(const TextStyle(
+          'Titre',
+          style: _ppAcma(
+            const TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
               fontSize: 32,
@@ -3207,27 +3507,30 @@ const _communityEvents = [
     title: '\u00C9v\u00E9nement Mis en\nAvant',
     date: 'Vendredi 2 janvier 2026',
     time: '10:00 \u2013 12:30',
-    description: 'Un rendez-vous pour rencontrer toute la communaut\u00E9 Kaalis, partager vos projets et vous inspirer.',
-    imageUrl: 'https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1600&auto=format&fit=crop',
-    heroImageUrl: 'https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1600&auto=format&fit=crop',
+    description:
+        'Un rendez-vous pour rencontrer toute la communaut\u00E9 Kaalis, partager vos projets et vous inspirer.',
+    imageUrl:
+        'https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1600&auto=format&fit=crop',
+    heroImageUrl:
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop',
   ),
   _CommunityEvent(
     title: '\u00C9v\u00E9nement 2',
     date: 'Vendredi 2 janvier 2026',
     time: '00:30 \u2013 01:30',
-    description: 'Votre prochaine destination pour un s\u00E9jour \u00E0 Gagnoa. Face \u00E0 l\u2019int\u00E9r\u00EAt grandissant envers les f\u00EAtes discos...',
+    description:
+        'Votre prochaine destination pour un s\u00E9jour \u00E0 Gagnoa. Face \u00E0 l\u2019int\u00E9r\u00EAt grandissant envers les f\u00EAtes discos...',
     imageUrl: 'https://picsum.photos/seed/event-1/1200/800',
   ),
   _CommunityEvent(
     title: '\u00C9v\u00E9nement 3',
     date: 'Vendredi 2 janvier 2026',
     time: '00:30 \u2013 01:30',
-    description: 'D\u00E9couvrez les coulisses du prochain Pop-Up Kaalis, rencontrez les cr\u00E9ateurs et profitez d\u2019exp\u00E9riences exclusives.',
+    description:
+        'D\u00E9couvrez les coulisses du prochain Pop-Up Kaalis, rencontrez les cr\u00E9ateurs et profitez d\u2019exp\u00E9riences exclusives.',
     imageUrl: 'https://picsum.photos/seed/event-2/1200/800',
   ),
 ];
-
-
 
 class SectionStyle extends StatelessWidget {
   const SectionStyle({super.key});
@@ -3280,9 +3583,13 @@ class _CommunityHero extends StatelessWidget {
       height: heroHeight,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: NetworkImage(event.heroImageUrl.isNotEmpty ? event.heroImageUrl : event.imageUrl),
+          image: NetworkImage(event.heroImageUrl.isNotEmpty
+              ? event.heroImageUrl
+              : event.imageUrl),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.08), BlendMode.srcOver),
+          alignment: const Alignment(0, -0.4),
+          colorFilter: ColorFilter.mode(
+              Colors.black.withValues(alpha: 0.08), BlendMode.srcOver),
         ),
         border: const Border(bottom: BorderSide(width: 2, color: kaalisBorder)),
       ),
@@ -3314,14 +3621,18 @@ class _CommunityHero extends StatelessWidget {
                   fontSize = 64;
                 }
                 return Text(
-                  event.title,
-                  style: _ppAcma(TextStyle(
+                  'Titre',
+                  style: _ppAcma(
+                    TextStyle(
                       color: kaalisPrimary,
                       fontWeight: FontWeight.w600,
                       fontSize: fontSize,
                       height: 0.98,
                       shadows: const [
-                        Shadow(color: Color(0x66FFFFFF), offset: Offset(0, 1), blurRadius: 0),
+                        Shadow(
+                            color: Color(0x66FFFFFF),
+                            offset: Offset(0, 1),
+                            blurRadius: 0),
                       ],
                     ),
                   ),
@@ -3368,24 +3679,25 @@ class _CommunityItem extends StatelessWidget {
         final isWide = constraints.maxWidth >= 1000;
         final gap = isWide ? 48.0 : 20.0;
 
-        final media = ClipRRect(
-          borderRadius: const BorderRadius.all(Radius.circular(2)),
-          child: AspectRatio(
-            aspectRatio: isWide ? 16 / 10 : 16 / 9,
-            child: Image.network(
-              event.imageUrl,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                return Container(color: const Color(0xFFE8E8E8));
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: const Color(0xFFE8E8E8),
-                  alignment: Alignment.center,
-                  child: const Icon(Icons.event, size: 48, color: Color(0xFFB0B0B0)),
-                );
-              },
+        final media = AspectRatio(
+          aspectRatio: isWide ? 16 / 10 : 16 / 9,
+          child: _CardPlaceholder(
+            borderRadius: const BorderRadius.all(Radius.circular(2)),
+            icon: Icons.event,
+            iconSize: isWide ? 56 : 48,
+          ),
+        );
+
+        final metaHeader = Center(
+          child: Text(
+            event.date,
+            style: _ppAcma(
+              const TextStyle(
+                fontSize: 14,
+                color: kaalisMuted,
+                letterSpacing: 0.5,
+                height: 1.2,
+              ),
             ),
           ),
         );
@@ -3393,9 +3705,10 @@ class _CommunityItem extends StatelessWidget {
         final body = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              event.title,
-              style: _ppAcma(const TextStyle(
+            const Text(
+              'Titre',
+              style: _ppAcma(
+                const TextStyle(
                   fontSize: 56,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF111111),
@@ -3406,7 +3719,8 @@ class _CommunityItem extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '${event.date}\n${event.time}',
-              style: _ppAcma(const TextStyle(
+              style: _ppAcma(
+                const TextStyle(
                   fontSize: 12,
                   color: kaalisMuted,
                   height: 1.4,
@@ -3416,7 +3730,8 @@ class _CommunityItem extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               event.description,
-              style: _ppAcma(const TextStyle(
+              style: _ppAcma(
+                const TextStyle(
                   fontSize: 14,
                   color: Color(0xFF6A6A6A),
                   height: 1.45,
@@ -3428,23 +3743,30 @@ class _CommunityItem extends StatelessWidget {
           ],
         );
 
-        if (isWide) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 11, child: media),
-              SizedBox(width: gap),
-              Expanded(flex: 9, child: body),
-            ],
-          );
-        }
+        final layout = isWide
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 11, child: media),
+                  SizedBox(width: gap),
+                  Expanded(flex: 9, child: body),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  media,
+                  SizedBox(height: gap),
+                  body,
+                ],
+              );
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            media,
+            metaHeader,
             SizedBox(height: gap),
-            body,
+            layout,
           ],
         );
       },
@@ -3470,7 +3792,8 @@ class _CommunityButton extends StatelessWidget {
 
 class _CommunityButtonContent extends StatefulWidget {
   @override
-  State<_CommunityButtonContent> createState() => _CommunityButtonContentState();
+  State<_CommunityButtonContent> createState() =>
+      _CommunityButtonContentState();
 }
 
 class _CommunityButtonContentState extends State<_CommunityButtonContent> {
@@ -3499,7 +3822,8 @@ class _CommunityButtonContentState extends State<_CommunityButtonContent> {
         ),
         child: Text(
           'Voir l\u2019\u00E9v\u00E9nement \u279C',
-          style: _ppAcma(TextStyle(
+          style: _ppAcma(
+            TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 14,
               color: foreground,
@@ -3527,7 +3851,8 @@ class _SectionPlaceholder extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 48),
           child: Text(
             message,
-            style: _ppAcma(const TextStyle(
+            style: _ppAcma(
+              const TextStyle(
                 fontSize: 16,
                 color: kaalisText,
                 height: 1.6,
@@ -3549,7 +3874,8 @@ class NewsletterDrawer extends StatefulWidget {
 }
 
 class _NewsletterDrawerState extends State<NewsletterDrawer> {
-  final FocusScopeNode _focusScope = FocusScopeNode(debugLabel: 'newsletter_scope');
+  final FocusScopeNode _focusScope =
+      FocusScopeNode(debugLabel: 'newsletter_scope');
   final FocusNode _panelFocus = FocusNode(debugLabel: 'newsletter_panel');
   final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -3609,7 +3935,9 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
       return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Merci ! Vous \u00EAtes inscrit\u00B7e \u00E0 la newsletter Kaalis.')),
+      const SnackBar(
+          content: Text(
+              'Merci ! Vous \u00EAtes inscrit\u00B7e \u00E0 la newsletter Kaalis.')),
     );
     form.reset();
     _emailController.clear();
@@ -3649,50 +3977,57 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                   width: panelWidth,
                   child: Shortcuts(
                     shortcuts: <LogicalKeySet, Intent>{
-                      LogicalKeySet(LogicalKeyboardKey.escape): const _CloseNewsletterIntent(),
+                      LogicalKeySet(LogicalKeyboardKey.escape):
+                          const _CloseNewsletterIntent(),
                     },
                     child: Actions(
                       actions: {
-                        _CloseNewsletterIntent: CallbackAction<_CloseNewsletterIntent>(
+                        _CloseNewsletterIntent:
+                            CallbackAction<_CloseNewsletterIntent>(
                           onInvoke: (_) {
                             widget.controller.close();
                             return null;
                           },
                         ),
                       },
-                  child: FocusScope(
-                    node: _focusScope,
-                    child: Focus(
-                      focusNode: _panelFocus,
-                      child: Overlay(
-                        initialEntries: [
-                          OverlayEntry(
-                            builder: (context) => Material(
-                              color: newsletterBg,
-                              elevation: 16,
-                              child: Stack(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 56, left: 24, right: 24, bottom: 28),
-                                    child: _buildContent(context),
+                      child: FocusScope(
+                        node: _focusScope,
+                        child: Focus(
+                          focusNode: _panelFocus,
+                          child: Overlay(
+                            initialEntries: [
+                              OverlayEntry(
+                                builder: (context) => Material(
+                                  color: newsletterBg,
+                                  elevation: 16,
+                                  child: Stack(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 56,
+                                            left: 24,
+                                            right: 24,
+                                            bottom: 28),
+                                        child: _buildContent(context),
+                                      ),
+                                      Positioned(
+                                        top: 12,
+                                        left: 12,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.close,
+                                              size: 28, color: Colors.black87),
+                                          tooltip: 'Fermer l\u2019inscription',
+                                          onPressed: widget.controller.close,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Positioned(
-                                    top: 12,
-                                    left: 12,
-                                    child: IconButton(
-                                      icon: const Icon(Icons.close, size: 28, color: Colors.black87),
-                                      tooltip: 'Fermer l\u2019inscription',
-                                      onPressed: widget.controller.close,
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
                     ),
                   ),
                 ),
@@ -3718,7 +4053,8 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
           children: [
             Text(
               'Rejoindre la communaut\u00E9\nKaalis',
-              style: _ppAcma(const TextStyle(
+              style: _ppAcma(
+                const TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.w700,
                   color: kaalisPrimary,
@@ -3736,17 +4072,22 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                   ),
                   TextSpan(
                     text: 'En savoir plus',
-                    style: const TextStyle(decoration: TextDecoration.underline),
+                    style:
+                        const TextStyle(decoration: TextDecoration.underline),
                     recognizer: _moreRecognizer,
                   ),
                 ],
               ),
-              style: const TextStyle(color: newsletterText, fontSize: 16, height: 1.5),
+              style: const TextStyle(
+                  color: newsletterText, fontSize: 16, height: 1.5),
             ),
             const SizedBox(height: 18),
             const Text(
               'Email *',
-              style: TextStyle(color: newsletterText, fontSize: 14, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: newsletterText,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 6),
             TextFormField(
@@ -3757,7 +4098,8 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                 hintText: 'votre@email.com',
                 filled: true,
                 fillColor: Colors.transparent,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Color(0x8C000000)),
                   borderRadius: BorderRadius.circular(2),
@@ -3783,7 +4125,10 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
             const SizedBox(height: 18),
             const Text(
               'Genre *',
-              style: TextStyle(color: newsletterText, fontSize: 14, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: newsletterText,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
             LayoutBuilder(
@@ -3796,7 +4141,8 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                     _genderOption('Mr', isNarrow),
                     _genderOption('Ms', isNarrow),
                     _genderOption('Mx', isNarrow),
-                    _genderOption('NA', isNarrow, label: 'Pr\u00E9f\u00E9rer ne pas dire'),
+                    _genderOption('NA', isNarrow,
+                        label: 'Pr\u00E9f\u00E9rer ne pas dire'),
                   ],
                 );
               },
@@ -3810,9 +4156,11 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   side: const BorderSide(color: Colors.black, width: 2),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 16),
                 ).copyWith(
-                  overlayColor: WidgetStateProperty.all(Colors.black.withValues(alpha: 0.1)),
+                  overlayColor: WidgetStateProperty.all(
+                      Colors.black.withValues(alpha: 0.1)),
                 ),
                 onPressed: () => _submit(context),
                 child: const Text('S\u2019inscrire'),
@@ -3846,7 +4194,8 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
                 fillColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) return Colors.black;
+                  if (states.contains(WidgetState.selected))
+                    return Colors.black;
                   return newsletterMuted.withValues(alpha: 0.8);
                 }),
               ),
@@ -3856,7 +4205,9 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isSelected ? newsletterText : newsletterText.withValues(alpha: 0.85),
+                  color: isSelected
+                      ? newsletterText
+                      : newsletterText.withValues(alpha: 0.85),
                 ),
               ),
             ],
@@ -3951,7 +4302,8 @@ class _FooterState extends State<_Footer> {
                     },
                   ),
                 },
-                child: _FooterBanner(onActivate: () => _openNewsletter(context)),
+                child:
+                    _FooterBanner(onActivate: () => _openNewsletter(context)),
               ),
               const SizedBox(height: 48),
             ],
@@ -3974,7 +4326,8 @@ class _FooterCol extends StatelessWidget {
         SizedBox(height: 8),
         _FooterLink(label: 'FAQ', route: _Routes.faq),
         SizedBox(height: 12),
-        _FooterLink(label: 'Politique de confidentialit\u00E9', route: _Routes.privacy),
+        _FooterLink(
+            label: 'Politique de confidentialit\u00E9', route: _Routes.privacy),
         SizedBox(height: 12),
         _FooterLink(label: 'A propos de nous', route: _Routes.about),
         SizedBox(height: 12),
@@ -3994,7 +4347,12 @@ class _FooterSocials extends StatelessWidget {
     final socials = [
       (Icons.music_note, 'TikTok', _Routes.socialTiktok, null),
       (Icons.facebook, 'Facebook', _Routes.socialFacebook, null),
-      (Icons.camera_alt_outlined, 'Instagram', _Routes.socialInstagram, _instagramProfile),
+      (
+        Icons.camera_alt_outlined,
+        'Instagram',
+        _Routes.socialInstagram,
+        _instagramProfile
+      ),
       (Icons.alternate_email, 'X', _Routes.socialX, null),
       (Icons.play_circle_fill, 'Youtube', _Routes.socialYoutube, null),
     ];
@@ -4077,10 +4435,13 @@ class _FooterBannerState extends State<_FooterBanner> {
                   child: Text(
                     bannerText,
                     key: ValueKey(bannerText),
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w700),
                   ),
                 ),
-                const Text('+', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800)),
+                const Text('+',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w800)),
               ],
             ),
           ),
@@ -4105,12 +4466,14 @@ class _FooterLink extends StatelessWidget {
   final String? route;
   final IconData? icon;
   final Uri? externalUrl;
-  const _FooterLink({required this.label, this.route, this.icon, this.externalUrl});
+  const _FooterLink(
+      {required this.label, this.route, this.icon, this.externalUrl});
 
   Future<void> _handleTap(BuildContext context) async {
     final navigator = Navigator.of(context);
     if (externalUrl != null) {
-      final launched = await launchUrl(externalUrl!, mode: LaunchMode.platformDefault);
+      final launched =
+          await launchUrl(externalUrl!, mode: LaunchMode.platformDefault);
       if (!launched && route != null) {
         navigator.pushNamed(route!);
       }
@@ -4123,7 +4486,8 @@ class _FooterLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = _ppAcma(TextStyle(
+    final textStyle = _ppAcma(
+      TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: icon != null ? 15 : 14,
         color: kaalisPrimary,
@@ -4210,19 +4574,24 @@ class _KaalisSearchDelegate extends SearchDelegate<_SearchEntry?> {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 16),
       itemCount: results.length,
-      separatorBuilder: (_, __) => const Divider(height: 1, color: kaalisBorder),
+      separatorBuilder: (_, __) =>
+          const Divider(height: 1, color: kaalisBorder),
       itemBuilder: (context, index) {
         final entry = results[index];
         return ListTile(
           title: Text(
             entry.title,
-            style: _ppAcma(const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: kaalisPrimary)),
+            style: _ppAcma(const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: kaalisPrimary)),
           ),
           subtitle: Text(
             entry.category,
             style: _ppAcma(const TextStyle(fontSize: 14, color: kaalisMuted)),
           ),
-          trailing: const Icon(Icons.north_east, size: 18, color: kaalisPrimary),
+          trailing:
+              const Icon(Icons.north_east, size: 18, color: kaalisPrimary),
           onTap: () => close(context, entry),
         );
       },
