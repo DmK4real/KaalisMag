@@ -3530,6 +3530,14 @@ const _communityEvents = [
         'D\u00E9couvrez les coulisses du prochain Pop-Up Kaalis, rencontrez les cr\u00E9ateurs et profitez d\u2019exp\u00E9riences exclusives.',
     imageUrl: 'https://picsum.photos/seed/event-2/1200/800',
   ),
+  _CommunityEvent(
+    title: '\u00C9v\u00E9nement 4',
+    date: 'Samedi 10 janvier 2026',
+    time: '18:00 \u2013 20:00',
+    description:
+        'Un atelier inédit autour de la création musicale et des performances immersives du collectif Kaalis.',
+    imageUrl: 'https://picsum.photos/seed/event-3/1200/800',
+  ),
 ];
 
 class SectionStyle extends StatelessWidget {
@@ -3702,21 +3710,21 @@ class _CommunityItem extends StatelessWidget {
           ),
         );
 
-        final body = Column(
+        final titleHeader = Text(
+          'Titre',
+          style: _ppAcma(
+            const TextStyle(
+              fontSize: 56,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF111111),
+              height: 1.02,
+            ),
+          ),
+        );
+
+        final detailBlock = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Titre',
-              style: _ppAcma(
-                const TextStyle(
-                  fontSize: 56,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF111111),
-                  height: 1.02,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             Text(
               '${event.date}\n${event.time}',
               style: _ppAcma(
@@ -3743,13 +3751,33 @@ class _CommunityItem extends StatelessWidget {
           ],
         );
 
+        final wideBody = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleHeader,
+            const SizedBox(height: 8),
+            const SizedBox(height: 140),
+            detailBlock,
+          ],
+        );
+
+        final narrowBody = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            titleHeader,
+            const SizedBox(height: 8),
+            SizedBox(height: gap + 40),
+            detailBlock,
+          ],
+        );
+
         final layout = isWide
             ? Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(flex: 11, child: media),
                   SizedBox(width: gap),
-                  Expanded(flex: 9, child: body),
+                  Expanded(flex: 9, child: wideBody),
                 ],
               )
             : Column(
@@ -3757,7 +3785,7 @@ class _CommunityItem extends StatelessWidget {
                 children: [
                   media,
                   SizedBox(height: gap),
-                  body,
+                  narrowBody,
                 ],
               );
 
