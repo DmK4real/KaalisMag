@@ -42,6 +42,12 @@ const int _opinionCardDescriptionMaxLines = 6;
 final Uri _instagramProfile = Uri.parse(
   'https://www.instagram.com/kaalismag?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==',
 );
+final Uri _tiktokProfile = Uri.parse(
+  'https://www.tiktok.com/@kaalismag?_r=1&_t=ZN-91GEsYR4Wus',
+);
+final Uri _facebookProfile =
+    Uri.parse('https://www.facebook.com/share/1CCxCeaENu/?mibextid=wwXIfr');
+final Uri _xProfile = Uri.parse('https://x.com/kaalismag?s=11');
 
 const _ppAcmaFamily = 'PPAcma';
 
@@ -89,7 +95,6 @@ class _Routes {
   static const lieux = '/lieux';
   static const style = '/style';
   static const community = '/community';
-  static const faq = '/faq';
   static const privacy = '/privacy';
   static const about = '/about';
   static const partners = '/partners';
@@ -287,7 +292,6 @@ List<_SearchEntry> _buildSearchEntries() {
         title: 'Communaut\u00E9',
         category: 'Navigation',
         route: _Routes.community),
-    const _SearchEntry(title: 'FAQ', category: 'Support', route: _Routes.faq),
     const _SearchEntry(
         title: 'Politique de confidentialit\u00E9',
         category: 'Support',
@@ -357,7 +361,6 @@ class _KaalisAppState extends State<KaalisApp> {
           _Routes.lieux: (context) => const LieuxPage(),
           _Routes.style: (context) => const StylePage(),
           _Routes.community: (context) => const CommunityPage(),
-          _Routes.faq: (context) => const FAQPage(),
           _Routes.privacy: (context) => const PrivacyPage(),
           _Routes.about: (context) => const AboutPage(),
           _Routes.partners: (context) => const PartnersPage(),
@@ -911,26 +914,13 @@ class CommunityPage extends StatelessWidget {
       body: CustomScrollView(
         slivers: _buildPageSlivers(
           activeRoute: _Routes.community,
+          includeHeader: false,
           body: [
             const SectionCommunity(),
             const _SectionDivider(),
           ],
         ),
       ),
-    );
-  }
-}
-
-class FAQPage extends StatelessWidget {
-  const FAQPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const _InfoScaffold(
-      route: _Routes.faq,
-      title: 'FAQ',
-      message:
-          'Toutes les réponses aux questions fréquentes seront publiées très bientôt.',
     );
   }
 }
@@ -1010,7 +1000,7 @@ class _AboutSection extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 26),
+          const SizedBox(height: 40),
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: Text(
@@ -1336,15 +1326,12 @@ class _PartnerContentBlock extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Text(
-                        '•',
-                        style:
-                            TextStyle(color: Color(0xFF3A3A3A), fontSize: 16),
-                      ),
+                    const Text(
+                      '•',
+                      style:
+                          TextStyle(color: Color(0xFF3A3A3A), fontSize: 16),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
@@ -1757,7 +1744,7 @@ class _PrivacyContent extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
               Text(
                 'Kaalis Magazine respecte votre vie privée et s’engage à protéger vos données personnelles.',
                 style: _ppAcma(
@@ -1780,7 +1767,7 @@ class _PrivacyContent extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
                 for (final paragraph in section.paragraphs) ...[
                   Text(
                     paragraph,
@@ -1792,7 +1779,7 @@ class _PrivacyContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 16),
                 ],
                 if (section.bullets.isNotEmpty)
                   Padding(
@@ -1821,14 +1808,14 @@ class _PrivacyContent extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 8),
                         ],
                       ],
                     ),
                   ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               Text(
                 'Dernière mise à jour : 07/11/2025',
                 style: _ppAcma(
@@ -1862,16 +1849,11 @@ class _Hero extends StatelessWidget {
                 128), // Top/bottom margin creates white space around the hero block.
         height: 720,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF4D83C2), Color(0xFFAED2EE)],
-          ),
-          border: Border.all(color: Color(0xFFE7E7E7)),
+          color: const Color(0xFFE3E3E3),
+          border: Border.all(color: const Color(0xFFD0D0D0)),
         ),
-        padding: const EdgeInsets.fromLTRB(96, 144, 96,
-            128), // Internal padding spaces the headline away from the border.
         alignment: Alignment.bottomLeft,
+        padding: const EdgeInsets.fromLTRB(96, 144, 96, 128),
         child: RichText(
           text: TextSpan(
             children: [
@@ -1879,7 +1861,7 @@ class _Hero extends StatelessWidget {
                 text: 'A la Une :\n',
                 style: _ppAcma(
                   const TextStyle(
-                    color: Colors.white,
+                    color: kaalisText,
                     fontWeight: FontWeight.w600,
                     fontSize: 88,
                     height: 1.08,
@@ -1890,7 +1872,7 @@ class _Hero extends StatelessWidget {
                 text: 'Article mis en avant',
                 style: _ppAcma(
                   const TextStyle(
-                    color: Colors.white,
+                    color: kaalisText,
                     fontWeight: FontWeight.w700,
                     fontSize: 128,
                     height: 1.05,
@@ -3587,66 +3569,298 @@ class _CommunityHero extends StatelessWidget {
     final viewportHeight = MediaQuery.of(context).size.height;
     final heroHeight = math.max(viewportHeight, _minHeight);
 
-    return Container(
+    return SizedBox(
       height: heroHeight,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(event.heroImageUrl.isNotEmpty
-              ? event.heroImageUrl
-              : event.imageUrl),
-          fit: BoxFit.cover,
-          alignment: const Alignment(0, -0.4),
-          colorFilter: ColorFilter.mode(
-              Colors.black.withValues(alpha: 0.08), BlendMode.srcOver),
-        ),
-        border: const Border(bottom: BorderSide(width: 2, color: kaalisBorder)),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(event.heroImageUrl.isNotEmpty
+                    ? event.heroImageUrl
+                    : event.imageUrl),
+                fit: BoxFit.cover,
+                alignment: const Alignment(0, -0.4),
+                colorFilter: ColorFilter.mode(
+                  Colors.black.withOpacity(0.24),
+                  BlendMode.srcOver,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xCCFFFFFF),
+                  Color(0x88FFFFFF),
+                  Color(0x00FFFFFF),
+                ],
+                stops: [0.0, 0.35, 1.0],
+              ),
+            ),
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final horizontalPadding = constraints.maxWidth < 960 ? 32.0 : 60.0;
+              final compactNav = constraints.maxWidth < 900;
+              return Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SafeArea(
+                      bottom: false,
+                      child: _CommunityHeroNav(
+                        horizontalPadding: horizontalPadding,
+                        compact: compactNav,
+                      ),
+                    ),
+                    const Spacer(),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                      child: LayoutBuilder(
+                        builder: (context, textConstraints) {
+                          final width = textConstraints.maxWidth;
+                          double fontSize = 72;
+                          if (width < 960) fontSize = 56;
+                          if (width < 640) fontSize = 44;
+                          return Text(
+                            event.title,
+                            style: _ppAcma(
+                              TextStyle(
+                                color: const Color(0xFFC5533E),
+                                fontWeight: FontWeight.w600,
+                                fontSize: fontSize,
+                                height: 1.08,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xF5FFFFFF),
-              Color(0x66FFFFFF),
-              Color(0x00FFFFFF),
+    );
+  }
+}
+
+class _CommunityHeroNav extends StatelessWidget {
+  final double horizontalPadding;
+  final bool compact;
+  const _CommunityHeroNav({
+    required this.horizontalPadding,
+    required this.compact,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final navLinks = _CommunityHeroNavLinks(spacing: compact ? 18 : 28);
+    final brand = Text(
+      'Kaalis',
+      style: _ppAcma(
+        const TextStyle(
+          fontSize: 60,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.2,
+          color: kaalisPrimary,
+        ),
+      ),
+    );
+    final actions = _CommunityHeroNavActions(compact: compact);
+
+    final content = compact
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              navLinks,
+              const SizedBox(height: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  brand,
+                  actions,
+                ],
+              ),
             ],
-            stops: [0.0, 0.35, 1.0],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(flex: 4, child: navLinks),
+              Expanded(flex: 2, child: Center(child: brand)),
+              Expanded(
+                flex: 4,
+                child: Align(alignment: Alignment.centerRight, child: actions),
+              ),
+            ],
+          );
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 10),
+      child: content,
+    );
+  }
+}
+
+class _CommunityHeroNavLinks extends StatelessWidget {
+  final double spacing;
+  const _CommunityHeroNavLinks({required this.spacing});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (var i = 0; i < _navLinks.length; i++) ...[
+            _CommunityHeroNavItem(
+              link: _navLinks[i],
+              active: _navLinks[i].route == _Routes.community,
+            ),
+            if (i < _navLinks.length - 1) SizedBox(width: spacing),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CommunityHeroNavItem extends StatelessWidget {
+  final _NavLink link;
+  final bool active;
+  const _CommunityHeroNavItem({
+    required this.link,
+    this.active = false,
+  });
+
+  void _handleTap(BuildContext context) {
+    final current = ModalRoute.of(context)?.settings.name ?? _Routes.home;
+    if (current == link.route) return;
+    Navigator.of(context).pushReplacementNamed(link.route);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => _handleTap(context),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              link.label,
+              style: _ppAcma(
+                TextStyle(
+                  fontSize: 16,
+                  fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+                  letterSpacing: 0.4,
+                  color: kaalisPrimary,
+                ),
+              ),
+            ),
+            if (active)
+              Container(
+                margin: const EdgeInsets.only(top: 6),
+                height: 2,
+                width: 22,
+                color: kaalisPrimary,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CommunityHeroNavActions extends StatelessWidget {
+  final bool compact;
+  const _CommunityHeroNavActions({this.compact = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final searchWidth = compact ? 160.0 : 220.0;
+    final logoSize = compact ? 56.0 : 80.0;
+    final iconSize = compact ? 32.0 : 44.0;
+    final spacing = compact ? 12.0 : 18.0;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _CommunityHeroSearchField(width: searchWidth),
+        SizedBox(width: spacing),
+        Icon(Icons.bookmark_border, color: kaalisPrimary, size: iconSize),
+        SizedBox(width: spacing),
+        Padding(
+          padding: EdgeInsets.only(top: compact ? 6.0 : 8.0),
+          child: SizedBox(
+            height: logoSize,
+            child: Image.asset(
+              'assets/logo.png',
+              color: kaalisPrimary,
+              width: logoSize,
+              height: logoSize,
+              filterQuality: FilterQuality.high,
+            ),
           ),
         ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: _Container(
-            padding: const EdgeInsets.fromLTRB(48, 120, 48, 36),
-            maxWidth: double.infinity,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                double fontSize = 84;
-                if (width < 640) {
-                  fontSize = 44;
-                } else if (width < 1000) {
-                  fontSize = 64;
-                }
-                return Text(
-                  'Titre',
-                  style: _ppAcma(
-                    TextStyle(
-                      color: kaalisPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: fontSize,
-                      height: 0.98,
-                      shadows: const [
-                        Shadow(
-                            color: Color(0x66FFFFFF),
-                            offset: Offset(0, 1),
-                            blurRadius: 0),
-                      ],
-                    ),
-                  ),
-                );
-              },
+      ],
+    );
+  }
+}
+
+class _CommunityHeroSearchField extends StatelessWidget {
+  final double width;
+  const _CommunityHeroSearchField({required this.width});
+
+  void _openSearch(BuildContext context) {
+    showSearch<_SearchEntry?>(
+      context: context,
+      delegate: _KaalisSearchDelegate(_buildSearchEntries()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => _openSearch(context),
+        child: Container(
+          width: width,
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Color(0xFFC5533E), width: 2),
             ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.search, color: Color(0xFFC5533E), size: 20),
+              const SizedBox(width: 10),
+              Text(
+                'Rechercher',
+                style: _ppAcma(
+                  const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFFC5533E),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -3747,7 +3961,7 @@ class _CommunityItem extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            _CommunityButton(onTap: () {}),
+            _CommunityButton(event: event),
           ],
         );
 
@@ -3803,15 +4017,28 @@ class _CommunityItem extends StatelessWidget {
 }
 
 class _CommunityButton extends StatelessWidget {
-  final VoidCallback onTap;
-  const _CommunityButton({required this.onTap});
+  final _CommunityEvent event;
+  const _CommunityButton({required this.event});
+
+  void _openEventModal(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Dialog(
+        insetPadding:
+            const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        backgroundColor: Colors.transparent,
+        child: _CommunityEventModal(event: event),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () => _openEventModal(context),
         child: _CommunityButtonContent(),
       ),
     );
@@ -3859,6 +4086,266 @@ class _CommunityButtonContentState extends State<_CommunityButtonContent> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _CommunityEventModal extends StatefulWidget {
+  final _CommunityEvent event;
+  const _CommunityEventModal({required this.event});
+
+  @override
+  State<_CommunityEventModal> createState() => _CommunityEventModalState();
+}
+
+class _CommunityEventModalState extends State<_CommunityEventModal> {
+  final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _nameController;
+  late final TextEditingController _companyController;
+  late final TextEditingController _emailController;
+  late final TextEditingController _subjectController;
+  late final TextEditingController _messageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+    _companyController = TextEditingController();
+    _emailController = TextEditingController();
+    _subjectController = TextEditingController();
+    _messageController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _companyController.dispose();
+    _emailController.dispose();
+    _subjectController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(6),
+      borderSide: const BorderSide(color: kaalisBorder),
+    );
+
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(
+          minWidth: 420,
+          maxWidth: 520,
+          minHeight: 420,
+          maxHeight: 560,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(26),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFF9F3A25),
+                  Color(0xFFC5533E),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: kaalisPrimary.withOpacity(0.4),
+                  blurRadius: 30,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Remplir la fiche contact',
+                        style: _ppAcma(
+                          theme.textTheme.titleLarge!.copyWith(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  widget.event.title,
+                  style: _ppAcma(
+                    theme.textTheme.titleMedium!.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFFFAF1EB),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          _ModalTextField(
+                            controller: _nameController,
+                            label: 'Prénom et NOM',
+                            hint: 'Kossi Traoré',
+                            border: border,
+                            validator: (value) =>
+                                (value?.trim().isEmpty ?? true) ? 'Obligatoire' : null,
+                          ),
+                          const SizedBox(height: 12),
+                          _ModalTextField(
+                            controller: _companyController,
+                            label: 'Nom de la marque/entreprise',
+                            border: border,
+                          ),
+                          const SizedBox(height: 12),
+                          _ModalTextField(
+                            controller: _emailController,
+                            label: 'Email',
+                            hint: 'vous@email.com',
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Obligatoire';
+                              }
+                              if (!value.contains('@')) {
+                                return 'Email invalide';
+                              }
+                              return null;
+                            },
+                            border: border,
+                          ),
+                          const SizedBox(height: 12),
+                          _ModalTextField(
+                            controller: _subjectController,
+                            label: 'Sujet',
+                            border: border,
+                          ),
+                          const SizedBox(height: 12),
+                          _ModalTextField(
+                            controller: _messageController,
+                            label: 'Message',
+                            border: border,
+                            maxLines: 4,
+                            validator: (value) =>
+                                (value?.trim().isEmpty ?? true) ? 'Obligatoire' : null,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Merci ${_nameController.text.trim()} — nous revenons vers vous rapidement.',
+                            ),
+                            backgroundColor: Colors.white,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: kaalisPrimary,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Envoyer',
+                      style: _ppAcma(
+                        const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModalTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+  final String? hint;
+  final TextInputType keyboardType;
+  final int maxLines;
+  final String? Function(String?)? validator;
+  final InputBorder border;
+
+  const _ModalTextField({
+    required this.controller,
+    required this.label,
+    this.hint,
+    this.keyboardType = TextInputType.text,
+    this.maxLines = 1,
+    this.validator,
+    required this.border,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        labelStyle: const TextStyle(
+          color: kaalisMuted,
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+        border: border,
+        fillColor: Colors.white,
+        filled: true,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        focusedBorder: border.copyWith(
+          borderSide: BorderSide(color: kaalisPrimary),
+        ),
+      ),
+      style: const TextStyle(fontSize: 16),
     );
   }
 }
@@ -4351,8 +4838,6 @@ class _FooterCol extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: const [
         _FootLabel('Communaut\u00E9'),
-        SizedBox(height: 8),
-        _FooterLink(label: 'FAQ', route: _Routes.faq),
         SizedBox(height: 12),
         _FooterLink(
             label: 'Politique de confidentialit\u00E9', route: _Routes.privacy),
@@ -4373,15 +4858,15 @@ class _FooterSocials extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final socials = [
-      (Icons.music_note, 'TikTok', _Routes.socialTiktok, null),
-      (Icons.facebook, 'Facebook', _Routes.socialFacebook, null),
+      (Icons.music_note, 'TikTok', _Routes.socialTiktok, _tiktokProfile),
+      (Icons.facebook, 'Facebook', _Routes.socialFacebook, _facebookProfile),
       (
         Icons.camera_alt_outlined,
         'Instagram',
         _Routes.socialInstagram,
         _instagramProfile
       ),
-      (Icons.alternate_email, 'X', _Routes.socialX, null),
+      (Icons.alternate_email, 'X', _Routes.socialX, _xProfile),
       (Icons.play_circle_fill, 'Youtube', _Routes.socialYoutube, null),
     ];
     return Column(
