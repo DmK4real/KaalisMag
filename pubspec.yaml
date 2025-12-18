@@ -20,6 +20,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.png
+    - assets/images/
   fonts:
     - family: PPAcma
       fonts:
