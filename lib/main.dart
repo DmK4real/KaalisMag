@@ -922,6 +922,19 @@ class _OpinionFullArticle extends StatelessWidget {
       fontWeight: FontWeight.w600,
       color: Color(0xFF111111),
     );
+    final bulletStyle = articleBodyStyle.copyWith(fontSize: 12);
+    List<InlineSpan> buildBulletSpans(List<String> items,
+        {bool leadingNewline = true}) {
+      final spans = <InlineSpan>[];
+      for (var i = 0; i < items.length; i++) {
+        if (i > 0 || leadingNewline) {
+          spans.add(const TextSpan(text: '\n'));
+        }
+        spans.add(TextSpan(text: '• ', style: bulletStyle));
+        spans.add(TextSpan(text: items[i]));
+      }
+      return spans;
+    }
     return _Container(
       padding: EdgeInsets.fromLTRB(24, 48, 24, 80),
       maxWidth: double.infinity,
@@ -1013,7 +1026,7 @@ class _OpinionFullArticle extends StatelessWidget {
           DefaultTextStyle.merge(
             style: articleBodyStyle,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
           ConstrainedBox(
             constraints: BoxConstraints(
@@ -1180,21 +1193,32 @@ class _OpinionFullArticle extends StatelessWidget {
                   ),
                   SizedBox(height: 18),
                   Text.rich(
-                    TextSpan(
-                      text: 'Le ',
-                      children: [
-                        TextSpan(
-                          text: 'basculement vers les coiffeuses en ligne',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
-                          text:
-                              ' (Instagram, TikTok, Facebook) a été rapide. Elles offrent ce que les salons n’ont pas su garantir :\n● une preuve visuelle de la compétence\n● un système de réservation\n● une prestation mieux encadrée',
-                        ),
-                      ],
-                    ),
+                  TextSpan(
+                    text: 'Le ',
+                    children: [
+                      TextSpan(
+                        text: 'basculement vers les coiffeuses en ligne',
+                        style: articleStrongStyle,
+                      ),
+                      TextSpan(
+                        children: [
+                          const TextSpan(
+                            text:
+                                ' (Instagram, TikTok, Facebook) a été rapide. Elles offrent ce que les salons n’ont pas su garantir :',
+                          ),
+                          ...buildBulletSpans(
+                            [
+                              'une preuve visuelle de la compétence',
+                              'un système de réservation',
+                              'une prestation mieux encadrée',
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 18),
+                ),
+                SizedBox(height: 18),
                   Text.rich(
                     TextSpan(
                       text: 'Les coiffeuses en ligne ont ',
@@ -1245,114 +1269,108 @@ class _OpinionFullArticle extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 18),
-                  Text('Les mèches ont augmenté bien plus vite que l’inflation générale.'),
-                  SizedBox(height: 18),
-                  Text.rich(
-                    TextSpan(
-                      text: 'En 2016, un paquet de mèches coûtait ',
-                      children: [
-                        TextSpan(
-                          text: '800 à 1000 FCFA',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(text: '. En 2025, il atteint '),
-                        TextSpan(
-                          text: '1200 à 1500 FCFA',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
-                          text:
-                              '. Et les paquets sont plus légers : une coiffure qui nécessitait cinq paquets peut aujourd’hui en demander ',
-                        ),
-                        TextSpan(
-                          text: 'dix',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
-                          text:
-                              '. Le secteur suit une dynamique propre, portée par la dépendance aux importations provenant d’Asie, la montée de la demande et le pouvoir de marché des revendeurs.',
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
                   Text.rich(
                     TextSpan(
                       children: [
+                        const TextSpan(text: 'Les mèches ont augmenté bien plus vite que l’inflation générale.'),
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'La main-d’œuvre',
-                          style: articleStrongStyle,
+                          text: 'En 2016, un paquet de mèches coûtait ',
+                          children: [
+                            TextSpan(
+                              text: '800 à 1000 FCFA',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(text: '. En 2025, il atteint '),
+                            TextSpan(
+                              text: '1200 à 1500 FCFA',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  '. Et les paquets sont plus légers : une coiffure qui nécessitait cinq paquets peut aujourd’hui en demander ',
+                            ),
+                            TextSpan(
+                              text: 'dix',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  '. Le secteur suit une dynamique propre, portée par la dépendance aux importations provenant d’Asie, la montée de la demande et le pouvoir de marché des revendeurs.',
+                            ),
+                          ],
                         ),
-                        const TextSpan(text: ' a suivi la même courbe : certaines prestations '),
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'dépassent les 20 000 FCFA',
-                          style: articleStrongStyle,
+                          children: [
+                            TextSpan(
+                              text: 'La main-d’œuvre',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(text: ' a suivi la même courbe : certaines prestations '),
+                            TextSpan(
+                              text: 'dépassent les 20 000 FCFA',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(text: ', un seuil impensable il y a quelques années.'),
+                          ],
                         ),
-                        const TextSpan(text: ', un seuil impensable il y a quelques années.'),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                  Text.rich(
-                    TextSpan(
-                      text:
-                          'Du côté des salons, la hausse n’est pas qu’une question de tendance. Ils répercutent des charges en ',
-                      children: [
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'forte augmentation',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
                           text:
-                              ' :\n● loyers passés de 80 000 à 150 000, parfois 250 000 FCFA.\n● salaires en hausse,\n● rénovations devenues indispensables pour rester attractifs.',
+                              'Du côté des salons, la hausse n’est pas qu’une question de tendance. Ils répercutent des charges en ',
+                          children: [
+                            TextSpan(
+                              text: 'forte augmentation',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  ' : loyers passés de 80 000 à 150 000, parfois 250 000 FCFA; salaires en hausse; rénovations devenues indispensables pour rester attractifs.',
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                  Text.rich(
-                    TextSpan(
-                      text: 'Les coiffeuses en ligne, quant à elles, mobilisent leur ',
-                      children: [
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: '“pricing power”',
-                          style: articleStrongStyle,
+                          text: 'Les coiffeuses en ligne, quant à elles, mobilisent leur ',
+                          children: [
+                            TextSpan(
+                              text: '“pricing power”',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  ' : on paie la compétence, le déplacement, et la forte demande.',
+                            ),
+                          ],
                         ),
-                        const TextSpan(
-                          text:
-                              ' : on paie la compétence, le déplacement, et la forte demande.',
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                  Text.rich(
-                    TextSpan(
-                      text:
-                          'Dans cet écosystème, chacun tente de s’ajuster, souvent au détriment de la cliente, qui voit ',
-                      children: [
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'le prix final grimper',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
                           text:
-                              ' beaucoup plus vite que la qualité du service. Obligée de trouver des alternatives telles que se couper les cheveux ou encore opter pour des perruques.',
+                              'Dans cet écosystème, chacun tente de s’ajuster, souvent au détriment de la cliente, qui voit ',
+                          children: [
+                            TextSpan(
+                              text: 'le prix final grimper',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  ' beaucoup plus vite que la qualité du service. Obligée de trouver des alternatives telles que se couper les cheveux ou encore opter pour des perruques.',
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 18),
-                  Text.rich(
-                    TextSpan(
-                      children: [
+                        const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'Cette revalorisation du travail féminin est importante',
-                          style: articleStrongStyle,
-                        ),
-                        const TextSpan(
-                          text:
-                              ', mais elle génère aussi une segmentation économique. La beauté devient un espace d’exclusion progressive.',
+                          children: [
+                            TextSpan(
+                              text: 'Cette revalorisation du travail féminin est importante',
+                              style: articleStrongStyle,
+                            ),
+                            const TextSpan(
+                              text:
+                                  ', mais elle génère aussi une segmentation économique. La beauté devient un espace d’exclusion progressive.',
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -1531,8 +1549,18 @@ class _OpinionFullArticle extends StatelessWidget {
                     'Derrière la rupture, il n’y a pas de recherche d’exceptionnel, juste des attentes simples, légitimes et claires.',
                   ),
                   SizedBox(height: 18),
-                  Text(
-                    '● De la douceur et une maîtrise grâce à une formation solide sans demander des prix exorbitants\n● Le respect du temps, pour la cliente comme pour la coiffeuse\n● Une transparence prix service par service, où le montant final ne surprend pas\n● Et surtout, un lieu, salon ou domicile, où le cheveu afro est compris comme une norme, pas l’exigence d’une cliente "difficile"',
+                  Text.rich(
+                    TextSpan(
+                      children: buildBulletSpans(
+                        [
+                          'De la douceur et une maîtrise grâce à une formation solide sans demander des prix exorbitants',
+                          'Le respect du temps, pour la cliente comme pour la coiffeuse',
+                          'Une transparence prix service par service, où le montant final ne surprend pas',
+                          'Et surtout, un lieu, salon ou domicile, où le cheveu afro est compris comme une norme, pas l’exigence d’une cliente \"difficile\"',
+                        ],
+                        leadingNewline: false,
+                      ),
+                    ),
                   ),
                   SizedBox(height: 18),
                   Align(
