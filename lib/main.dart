@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 // No web-only redirect; article is integrated into the app UI.
+import 'responsive/fluid.dart';
 import 'services/opinion_api.dart';
 import 'services/partners_api.dart';
 import 'services/portrait_api.dart';
+import 'widgets/page_container.dart';
+import 'widgets/responsive_row.dart';
 
 void main() {
   runApp(const KaalisApp());
@@ -380,11 +383,15 @@ class _KaalisAppState extends State<KaalisApp> {
           );
         },
         builder: (context, child) {
-          return Stack(
-            children: [
-              child ?? const SizedBox.shrink(),
-              NewsletterDrawer(controller: _newsletterController),
-            ],
+          final media = MediaQuery.of(context);
+          return MediaQuery(
+            data: media.copyWith(textScaler: const TextScaler.linear(1.0)),
+            child: Stack(
+              children: [
+                child ?? const SizedBox.shrink(),
+                NewsletterDrawer(controller: _newsletterController),
+              ],
+            ),
           );
         },
       ),
@@ -447,32 +454,10 @@ class _Container extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final resolvedPadding = padding.resolve(Directionality.of(context));
-    final width = MediaQuery.of(context).size.width;
-    double clampHorizontal(double inset) {
-      if (width < 420) {
-        return math.min(inset, 20);
-      }
-      if (width < 720) {
-        return math.min(inset, 28);
-      }
-      return inset;
-    }
-    final effectivePadding = EdgeInsets.fromLTRB(
-      clampHorizontal(resolvedPadding.left),
-      resolvedPadding.top,
-      clampHorizontal(resolvedPadding.right),
-      resolvedPadding.bottom,
-    );
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        constraints: maxWidth != null
-            ? BoxConstraints(maxWidth: maxWidth!)
-            : const BoxConstraints(),
-        padding: effectivePadding,
-        child: child,
-      ),
+    return PageContainer(
+      padding: padding,
+      maxWidth: maxWidth,
+      child: child,
     );
   }
 }
@@ -1781,17 +1766,8 @@ class _AboutSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    double titleSize = 84;
-    double quoteSize = 42;
-    if (width < 1000) {
-      titleSize = 64;
-      quoteSize = 34;
-    }
-    if (width < 640) {
-      titleSize = 44;
-      quoteSize = 26;
-    }
+    final titleSize = fluid(context, min: 40, max: 84);
+    final quoteSize = fluid(context, min: 24, max: 42);
 
     const introParagraphs = [
       'Fondé en 2025 à Abidjan, Kaalis Media est un média digital indépendant qui redéfinit la manière dont la culture, le design et le lifestyle africains sont perçus, partagés et célébrés. Né de la volonté de raconter une Afrique moderne à travers le regard de sa jeunesse créative, Kaalis s’impose comme une plateforme curatée, esthétique et profondément ancrée dans son époque.',
@@ -2062,6 +2038,7 @@ class _PartnerRow extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 1000;
+        final gap = isWide ? 48.0 : 32.0;
         final media = _PartnerMedia(isWide: isWide);
         final content = _PartnerContentBlock(
           data: data,
@@ -2069,24 +2046,15 @@ class _PartnerRow extends StatelessWidget {
           onContactTap: onContactTap,
         );
 
-        if (isWide) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Expanded(flex: 9, child: media),
-              const SizedBox(width: 48),
-              Expanded(flex: 11, child: content),
-            ],
-          );
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            media,
-            const SizedBox(height: 32),
-            content,
-          ],
+        return ResponsiveRow(
+          left: media,
+          right: content,
+          gap: gap,
+          leftFlex: 9,
+          rightFlex: 11,
+          crossAxisAlignment:
+              isWide ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+          collapseBelow: 1000,
         );
       },
     );
@@ -2532,14 +2500,7 @@ class _PrivacyContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    double titleSize = 60;
-    if (width < 1000) {
-      titleSize = 48;
-    }
-    if (width < 640) {
-      titleSize = 38;
-    }
+    final titleSize = fluid(context, min: 34, max: 60);
 
     return _Container(
       padding: const EdgeInsets.fromLTRB(48, 72, 48, 72),
@@ -2665,32 +2626,42 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final heroHeight = fluid(context, min: 380, max: 720);
+    final marginTop = fluid(context, min: 48, max: 96);
+    final marginBottom = fluid(context, min: 72, max: 128);
+    final paddingHorizontal = fluid(context, min: 20, max: 96);
+    final paddingTop = fluid(context, min: 64, max: 144);
+    final paddingBottom = fluid(context, min: 72, max: 128);
+    final kickerSize = fluid(context, min: 32, max: 88);
+    final headlineSize = fluid(context, min: 48, max: 128);
+
     return _Container(
       padding: const EdgeInsets.symmetric(
           horizontal: 48), // Page gutter keeps the hero away from screen edges.
       maxWidth: double.infinity,
       child: Container(
-        margin: const EdgeInsets.only(
-            top: 96,
+        margin: EdgeInsets.only(
+            top: marginTop,
             bottom:
-                128), // Top/bottom margin creates white space around the hero block.
-        height: 720,
+                marginBottom), // Top/bottom margin creates white space around the hero block.
+        height: heroHeight,
         decoration: BoxDecoration(
           color: const Color(0xFFE3E3E3),
           border: Border.all(color: const Color(0xFFD0D0D0)),
         ),
         alignment: Alignment.bottomLeft,
-        padding: const EdgeInsets.fromLTRB(96, 144, 96, 128),
+        padding: EdgeInsets.fromLTRB(
+            paddingHorizontal, paddingTop, paddingHorizontal, paddingBottom),
         child: RichText(
           text: TextSpan(
             children: [
               TextSpan(
                 text: 'A la Une :\n',
                 style: _ppAcma(
-                  const TextStyle(
+                  TextStyle(
                     color: kaalisText,
                     fontWeight: FontWeight.w600,
-                    fontSize: 88,
+                    fontSize: kickerSize,
                     height: 1.08,
                   ),
                 ),
@@ -2698,10 +2669,10 @@ class _Hero extends StatelessWidget {
               TextSpan(
                 text: 'Article mis en avant',
                 style: _ppAcma(
-                  const TextStyle(
+                  TextStyle(
                     color: kaalisText,
                     fontWeight: FontWeight.w700,
-                    fontSize: 128,
+                    fontSize: headlineSize,
                     height: 1.05,
                   ),
                 ),
@@ -2722,6 +2693,7 @@ class _SectionDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleSize = fluid(context, min: 40, max: 88);
     return _Container(
       padding: const EdgeInsets.symmetric(horizontal: 48),
       maxWidth: double.infinity,
@@ -2769,11 +2741,12 @@ class SectionHead extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
+                  softWrap: true,
                   style: _ppAcma(
-                    const TextStyle(
+                    TextStyle(
                       color: kaalisPrimary,
                       fontWeight: FontWeight.w700,
-                      fontSize: 88,
+                      fontSize: titleSize,
                       height: 0.95,
                     ),
                   ),
@@ -3051,13 +3024,7 @@ class _OpinionHero extends StatelessWidget {
         children: [
           Builder(
             builder: (context) {
-              final width = MediaQuery.of(context).size.width;
-              double fontSize = 84;
-              if (width < 640) {
-                fontSize = 44;
-              } else if (width < 1000) {
-                fontSize = 64;
-              }
+              final fontSize = fluid(context, min: 40, max: 84);
                 return Text(
                   'Titre',
                   textAlign: TextAlign.center,
@@ -3202,10 +3169,10 @@ class _OpinionGridCard extends StatelessWidget {
         Text(
           'Titre',
           style: _ppAcma(
-            const TextStyle(
+            TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
-              fontSize: 32,
+              fontSize: fluid(context, min: 20, max: 32),
               height: 1.1,
             ),
           ),
@@ -3254,13 +3221,7 @@ class _PortraitHero extends StatelessWidget {
         children: [
           Builder(
             builder: (context) {
-              final width = MediaQuery.of(context).size.width;
-              double fontSize = 84;
-              if (width < 640) {
-                fontSize = 44;
-              } else if (width < 1000) {
-                fontSize = 64;
-              }
+              final fontSize = fluid(context, min: 40, max: 84);
                return Text(
                  'Titre',
                 textAlign: TextAlign.center,
@@ -3778,9 +3739,9 @@ class _ChoixLargeCard extends StatelessWidget {
                     child: Text(
                       'Titre',
                       style: _ppAcma(
-                        const TextStyle(
+                        TextStyle(
                           color: Colors.white,
-                          fontSize: 40,
+                          fontSize: fluid(context, min: 24, max: 40),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -3900,13 +3861,7 @@ class _LieuxHero extends StatelessWidget {
         children: [
           Builder(
             builder: (context) {
-              final width = MediaQuery.of(context).size.width;
-              double fontSize = 84;
-              if (width < 640) {
-                fontSize = 44;
-              } else if (width < 1000) {
-                fontSize = 64;
-              }
+              final fontSize = fluid(context, min: 40, max: 84);
                return Text(
                  'Titre',
                  textAlign: TextAlign.center,
@@ -4050,10 +4005,10 @@ class _LieuxGridCard extends StatelessWidget {
         Text(
           'Titre',
           style: _ppAcma(
-            const TextStyle(
+            TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
-              fontSize: 32,
+              fontSize: fluid(context, min: 20, max: 32),
               height: 1.1,
             ),
           ),
@@ -4079,13 +4034,7 @@ class _StyleHero extends StatelessWidget {
         children: [
           Builder(
             builder: (context) {
-              final width = MediaQuery.of(context).size.width;
-              double fontSize = 84;
-              if (width < 640) {
-                fontSize = 44;
-              } else if (width < 1000) {
-                fontSize = 64;
-              }
+              final fontSize = fluid(context, min: 40, max: 84);
                return Text(
                  'Titre',
                  textAlign: TextAlign.center,
@@ -4281,10 +4230,10 @@ class _StyleGridCard extends StatelessWidget {
         Text(
           'Titre',
           style: _ppAcma(
-            const TextStyle(
+            TextStyle(
               color: Color(0xFF262626),
               fontWeight: FontWeight.w600,
-              fontSize: 32,
+              fontSize: fluid(context, min: 20, max: 32),
               height: 1.1,
             ),
           ),
@@ -4453,10 +4402,7 @@ class _CommunityHero extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                       child: LayoutBuilder(
                         builder: (context, textConstraints) {
-                          final width = textConstraints.maxWidth;
-                          double fontSize = 72;
-                          if (width < 960) fontSize = 56;
-                          if (width < 640) fontSize = 44;
+                          final fontSize = fluid(context, min: 40, max: 72);
                           return Text(
                             event.title,
                             style: _ppAcma(
@@ -4497,8 +4443,8 @@ class _CommunityHeroNav extends StatelessWidget {
     final brand = Text(
       'Kaalis',
       style: _ppAcma(
-        const TextStyle(
-          fontSize: 60,
+        TextStyle(
+          fontSize: fluid(context, min: 32, max: 60),
           fontWeight: FontWeight.w600,
           letterSpacing: 1.2,
           color: kaalisPrimary,
@@ -4760,8 +4706,8 @@ class _CommunityItem extends StatelessWidget {
         final titleHeader = Text(
           'Titre',
           style: _ppAcma(
-            const TextStyle(
-              fontSize: 56,
+            TextStyle(
+              fontSize: fluid(context, min: 28, max: 56),
               fontWeight: FontWeight.w600,
               color: Color(0xFF111111),
               height: 1.02,
@@ -4962,6 +4908,11 @@ class _CommunityEventModalState extends State<_CommunityEventModal> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final media = MediaQuery.of(context);
+    final maxWidth = math.max(0.0, math.min(520, media.size.width - 32));
+    final maxHeight = math.max(0.0, math.min(560, media.size.height - 32));
+    final minWidth = math.min(420, maxWidth);
+    final minHeight = math.min(420, maxHeight);
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(color: kaalisBorder),
@@ -4969,11 +4920,11 @@ class _CommunityEventModalState extends State<_CommunityEventModal> {
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minWidth: 420,
-          maxWidth: 520,
-          minHeight: 420,
-          maxHeight: 560,
+        constraints: BoxConstraints(
+          minWidth: minWidth,
+          maxWidth: maxWidth,
+          minHeight: minHeight,
+          maxHeight: maxHeight,
         ),
         child: Material(
           color: Colors.transparent,
