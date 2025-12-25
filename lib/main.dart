@@ -942,8 +942,9 @@ class _OpinionFullArticle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pageWidth = MediaQuery.of(context).size.width;
-    final mediaMaxWidth =
-        math.min(1000, pageWidth * (pageWidth < 720 ? 0.98 : 0.9));
+    final mediaMaxWidth = math
+        .min(1000.0, pageWidth * (pageWidth < 720 ? 0.98 : 0.9))
+        .toDouble();
     const articleBodyStyle = TextStyle(
       fontSize: 18,
       height: 1.9,
@@ -2721,6 +2722,7 @@ class SectionHead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final titleSize = fluid(context, min: 40, max: 88);
     return _Container(
       padding: const EdgeInsets.symmetric(horizontal: 48),
       maxWidth: double.infinity,
@@ -4909,10 +4911,14 @@ class _CommunityEventModalState extends State<_CommunityEventModal> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final media = MediaQuery.of(context);
-    final maxWidth = math.max(0.0, math.min(520, media.size.width - 32));
-    final maxHeight = math.max(0.0, math.min(560, media.size.height - 32));
-    final minWidth = math.min(420, maxWidth);
-    final minHeight = math.min(420, maxHeight);
+    final maxWidth = math
+        .max(0.0, math.min(520.0, media.size.width - 32))
+        .toDouble();
+    final maxHeight = math
+        .max(0.0, math.min(560.0, media.size.height - 32))
+        .toDouble();
+    final minWidth = math.min(420.0, maxWidth).toDouble();
+    final minHeight = math.min(420.0, maxHeight).toDouble();
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
       borderSide: const BorderSide(color: kaalisBorder),
