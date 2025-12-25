@@ -1,4 +1,4 @@
-Ôªøimport 'dart:math' as math;
+import 'dart:math' as math;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -511,6 +511,7 @@ class _Header extends StatelessWidget {
           builder: (context, constraints) {
             final isCompact = constraints.maxWidth < 820;
             final isTight = constraints.maxWidth < 420;
+            final isWide = constraints.maxWidth >= 1200;
             final spacing = isTight ? 20.0 : 40.0;
             final fontSize = isTight ? 14.0 : 17.0;
 
@@ -593,6 +594,26 @@ class _Header extends StatelessWidget {
                 ),
               ],
             );
+            final wideActionRow = Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                searchButton(width: searchWidth),
+                const Spacer(),
+                Icon(Icons.bookmark_border,
+                    size: bookmarkSize, color: kaalisPrimary),
+                SizedBox(width: iconSpacingSecondary),
+                Padding(
+                  padding: EdgeInsets.only(top: logoOffset),
+                  child: Image.asset(
+                    'assets/logo.png',
+                    color: kaalisPrimary,
+                    width: logoSize,
+                    height: logoSize,
+                    filterQuality: FilterQuality.high,
+                  ),
+                ),
+              ],
+            );
 
             final compactContent = isTight
                 ? Column(
@@ -647,25 +668,15 @@ class _Header extends StatelessWidget {
                         Expanded(child: navLinks),
                         Expanded(child: Center(child: brand)),
                         Expanded(
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              searchButton(width: searchWidth),
-                              const Spacer(),
-                              Icon(Icons.bookmark_border,
-                                  size: bookmarkSize, color: kaalisPrimary),
-                              SizedBox(width: iconSpacingSecondary),
-                              Padding(
-                                padding: EdgeInsets.only(top: logoOffset),
-                                child: Image.asset(
-                                  'assets/logo.png',
-                                  color: kaalisPrimary,
-                                  width: logoSize,
-                                  height: logoSize,
-                                  filterQuality: FilterQuality.high,
-                                ),
-                              ),
-                            ],
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: isWide
+                                ? wideActionRow
+                                : FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: Alignment.centerRight,
+                                    child: actionRow,
+                                  ),
                           ),
                         ),
                       ],
@@ -787,7 +798,7 @@ class _HeaderBrand extends StatelessWidget {
           onTap: () => _goHome(context),
           child: Semantics(
             button: true,
-            label: 'Revenir √† l‚Äôaccueil Kaalis',
+            label: 'Revenir ‡ líaccueil Kaalis',
             child: text,
           ),
         ),
@@ -815,12 +826,12 @@ class _OpinionPageState extends State<OpinionPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const _AsyncSectionLoading(
-                message: 'Chargement des articles Opinion‚Ä¶');
+                message: 'Chargement des articles OpinionÖ');
           }
           if (snapshot.hasError) {
             return const _SectionPlaceholder(
               title: 'Opinion',
-              message: 'Impossible d‚Äôafficher les articles pour le moment.',
+              message: 'Impossible díafficher les articles pour le moment.',
             );
           }
           final data = snapshot.data;
@@ -912,7 +923,7 @@ class _UnavailableContent extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            'Merci de revenir plus tard. En attendant, vous pouvez revenir √† l\'article principal.',
+            'Merci de revenir plus tard. En attendant, vous pouvez revenir ‡ l\'article principal.',
             textAlign: TextAlign.center,
             style: _ppAcma(const TextStyle(fontSize: 16, color: Color(0xFF444444))),
           ),
@@ -926,7 +937,7 @@ class _UnavailableContent extends StatelessWidget {
               Navigator.of(context).pushReplacementNamed(_Routes.opinionArticle);
             },
             child: Text(
-              'Revenir √† l\'article',
+              'Revenir ‡ l\'article',
               style: _ppAcma(const TextStyle(fontSize: 16, color: Colors.white)),
             ),
           ),
@@ -945,8 +956,12 @@ class _OpinionFullArticle extends StatelessWidget {
     final mediaMaxWidth = math
         .min(1000.0, pageWidth * (pageWidth < 720 ? 0.98 : 0.9))
         .toDouble();
-    const articleBodyStyle = TextStyle(
-      fontSize: 18,
+    final articleTextMaxWidth =
+        math.min(1200.0, pageWidth * (pageWidth < 640 ? 0.98 : 0.94));
+    final quoteMaxWidth =
+        math.min(800.0, pageWidth * (pageWidth < 640 ? 0.95 : 0.8));
+    final articleBodyStyle = TextStyle(
+      fontSize: fluid(context, min: 16, max: 18),
       height: 1.9,
       color: Color(0xFF444444),
       fontWeight: FontWeight.w400,
@@ -955,7 +970,8 @@ class _OpinionFullArticle extends StatelessWidget {
       fontWeight: FontWeight.w600,
       color: Color(0xFF111111),
     );
-    final bulletStyle = articleBodyStyle.copyWith(fontSize: 12);
+    final bulletStyle =
+        articleBodyStyle.copyWith(fontSize: fluid(context, min: 12, max: 14));
     List<InlineSpan> buildBulletSpans(List<String> items,
         {bool leadingNewline = true}) {
       final spans = <InlineSpan>[];
@@ -963,7 +979,7 @@ class _OpinionFullArticle extends StatelessWidget {
         if (i > 0 || leadingNewline) {
           spans.add(const TextSpan(text: '\n'));
         }
-        spans.add(TextSpan(text: '‚Ä¢ ', style: bulletStyle));
+        spans.add(TextSpan(text: 'ï ', style: bulletStyle));
         spans.add(TextSpan(text: items[i]));
       }
       return spans;
@@ -1028,7 +1044,7 @@ class _OpinionFullArticle extends StatelessWidget {
                             textAlign: TextAlign.center,
                             text: TextSpan(children: [
                               TextSpan(
-                                text: 'Beaut√© 2.0 :\n',
+                                text: 'BeautÈ 2.0 :\n',
                                 style: _ppAcma(TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w600,
@@ -1037,7 +1053,7 @@ class _OpinionFullArticle extends StatelessWidget {
                                 )),
                               ),
                               TextSpan(
-                                text: 'Pourquoi se coiffer co√ªte d√©sormais 99 millions ?',
+                                text: 'Pourquoi se coiffer co˚te dÈsormais 99 millions ?',
                                 style: _ppAcma(TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -1063,7 +1079,7 @@ class _OpinionFullArticle extends StatelessWidget {
               children: [
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1071,16 +1087,16 @@ class _OpinionFullArticle extends StatelessWidget {
                 
                 SizedBox(height: 12),
                 Text(
-                  'Le monde de la coiffure √† Abidjan traverse une transformation profonde. Ce n‚Äôest pas un ph√©nom√®ne soudain, ni un simple effet de mode. C‚Äôest le r√©sultat d‚Äôann√©es d‚Äôinsatisfaction, d‚Äôune accumulation de petites d√©ceptions, de douleurs inutiles, d‚Äôheures perdues au salon √† attendre.',
-                  style: TextStyle(fontSize: 18, height: 1.9),
+                  'Le monde de la coiffure ‡ Abidjan traverse une transformation profonde. Ce níest pas un phÈnomËne soudain, ni un simple effet de mode. Cíest le rÈsultat díannÈes díinsatisfaction, díune accumulation de petites dÈceptions, de douleurs inutiles, díheures perdues au salon ‡ attendre.',
+                  style: articleBodyStyle,
                 ),
                 SizedBox(height: 18),
                 Center(
                   child: Text(
-                    '‚ÄúUne natte trop serr√©e, un brushing impos√©, un prix invent√©.‚Äù',
+                    'ìUne natte trop serrÈe, un brushing imposÈ, un prix inventÈ.î',
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: fluid(context, min: 18, max: 22),
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF993A25),
                     ),
@@ -1088,7 +1104,7 @@ class _OpinionFullArticle extends StatelessWidget {
                 ),
                 SizedBox(height: 12),
                 Text(
-                  'Peu √† peu, les clientes ont quitt√© les salons traditionnels pour les coiffeuses en ligne. Parce qu‚Äôelles ont compris que ce que ces espaces leur offraient ne correspondait plus √† ce qu‚Äôelles recherchaient, ni en termes de soin, ni en termes de respect, ni en termes de qualit√©.',
+                  'Peu ‡ peu, les clientes ont quittÈ les salons traditionnels pour les coiffeuses en ligne. Parce quíelles ont compris que ce que ces espaces leur offraient ne correspondait plus ‡ ce quíelles recherchaient, ni en termes de soin, ni en termes de respect, ni en termes de qualitÈ.',
                 ),
                 SizedBox(height: 12),
                 Center(
@@ -1099,20 +1115,20 @@ class _OpinionFullArticle extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 18),
-                Text('Pendant longtemps, le salon a √©t√© un lieu de proximit√©. Un espace de conversation et de lien f√©minin, on y feuilletait des magazines pour y trouver nos mod√®les. Mais cet h√©ritage ne suffit plus √† masquer ses limites, devenues trop visibles.',
+                Text('Pendant longtemps, le salon a ÈtÈ un lieu de proximitÈ. Un espace de conversation et de lien fÈminin, on y feuilletait des magazines pour y trouver nos modËles. Mais cet hÈritage ne suffit plus ‡ masquer ses limites, devenues trop visibles.',
                 ),
                 SizedBox(height: 12),
                 Text.rich(
                   TextSpan(
-                    text: 'La douleur a √©t√© normalis√©e : ',
+                    text: 'La douleur a ÈtÈ normalisÈe : ',
                     children: [
                       TextSpan(
-                        text: '"il faut souffrir pour √™tre belle"',
+                        text: '"il faut souffrir pour Ítre belle"',
                         style: articleStrongStyle,
                       ),
                       const TextSpan(
                         text:
-                            '. La chaleur excessive, les gestes brusques, la casse : comme si le cheveu afro √©tait un probl√®me. La ma√Ætrise r√©elle du cheveu afro ne progresse pas faute de formation continue. Dans de nombreux salons, seules une ou deux coiffeuses savent ex√©cuter certaines coiffures, tandis que les autres improvisent. Et face aux nouvelles tendances, rares sont celles qui savent dire ',
+                            '. La chaleur excessive, les gestes brusques, la casse : comme si le cheveu afro Ètait un problËme. La maÓtrise rÈelle du cheveu afro ne progresse pas faute de formation continue. Dans de nombreux salons, seules une ou deux coiffeuses savent exÈcuter certaines coiffures, tandis que les autres improvisent. Et face aux nouvelles tendances, rares sont celles qui savent dire ',
                       ),
                       TextSpan(
                         text: '"non"',
@@ -1120,10 +1136,10 @@ class _OpinionFullArticle extends StatelessWidget {
                       ),
                       const TextSpan(
                         text:
-                            ' √† une coiffure qu‚Äôelles ne ma√Ætrisent pas, plut√¥t : ',
+                            ' ‡ une coiffure quíelles ne maÓtrisent pas, plutÙt : ',
                       ),
                       TextSpan(
-                        text: '‚Äúviens seulement, on va g√©rer‚Äù',
+                        text: 'ìviens seulement, on va gÈrerî',
                         style: articleStrongStyle,
                       ),
                       const TextSpan(text: '.'),
@@ -1134,19 +1150,19 @@ class _OpinionFullArticle extends StatelessWidget {
                 Text.rich(
                   TextSpan(
                     text:
-                        'S‚Äôajoutent √† cela une organisation d√©faillante, des heures d‚Äôattente, des interruptions pour d‚Äôautres clientes plus √¢g√©es, des enfants rel√©gu√©s en fin de file. Et un manque de transparence au niveau des prix qui creuse encore la m√©fiance : suppl√©ments non annonc√©s ',
+                        'Síajoutent ‡ cela une organisation dÈfaillante, des heures díattente, des interruptions pour díautres clientes plus ‚gÈes, des enfants relÈguÈs en fin de file. Et un manque de transparence au niveau des prix qui creuse encore la mÈfiance : supplÈments non annoncÈs ',
                     children: [
                       TextSpan(
-                        text: '‚Äúle brushing forc√©‚Äù',
+                        text: 'ìle brushing forcÈî',
                         style: articleStrongStyle,
                       ),
                       const TextSpan(
                         text:
-                            ', grille tarifaire invisible, prix fix√©s √† l‚Äôhumeur du jour ou √† la t√™te de la cliente : ',
+                            ', grille tarifaire invisible, prix fixÈs ‡ líhumeur du jour ou ‡ la tÍte de la cliente : ',
                       ),
                       TextSpan(
                         text:
-                            '‚ÄúUne coiffeuse dit un prix, la patronne en dit un autre ?‚Äù',
+                            'ìUne coiffeuse dit un prix, la patronne en dit un autre ?î',
                         style: articleStrongStyle,
                       ),
                     ],
@@ -1157,10 +1173,10 @@ class _OpinionFullArticle extends StatelessWidget {
                   alignment: const Alignment(0.2, 0),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: math.min(800, pageWidth * 0.8),
+                      maxWidth: quoteMaxWidth,
                     ),
                     child: Text(
-                      'R√©sultat ? La confiance se fissure‚Ä¶',
+                      'RÈsultat ? La confiance se fissureÖ',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Color(0xFF993A25),
@@ -1172,15 +1188,15 @@ class _OpinionFullArticle extends StatelessWidget {
                 SizedBox(height: 12),
                 Text.rich(
                   TextSpan(
-                    text: 'La jeune g√©n√©ration apprend √† ',
+                    text: 'La jeune gÈnÈration apprend ‡ ',
                     children: [
                       TextSpan(
-                        text: 'se d√©brouiller seule',
+                        text: 'se dÈbrouiller seule',
                         style: articleStrongStyle,
                       ),
                       const TextSpan(
                         text:
-                            '. Elle apprend √† se laver, d√©m√™ler et comprendre la nature de ses cheveux mieux que celles qui √©taient cens√©es en prendre soin. Peu √† peu, elle s‚Äôest √©loign√©e de ces salons pourtant con√ßus pour rassembler toutes les commodit√©s : lavage, tresses, soins, etc‚Ä¶',
+                            '. Elle apprend ‡ se laver, dÈmÍler et comprendre la nature de ses cheveux mieux que celles qui Ètaient censÈes en prendre soin. Peu ‡ peu, elle síest ÈloignÈe de ces salons pourtant conÁus pour rassembler toutes les commoditÈs : lavage, tresses, soins, etcÖ',
                       ),
                     ],
                   ),
@@ -1192,7 +1208,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             
           ),
@@ -1208,7 +1224,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             child: DefaultTextStyle.merge(
               style: articleBodyStyle,
@@ -1216,7 +1232,7 @@ class _OpinionFullArticle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                                     Text(
-                    'La nouvelle sc√®ne capillaire abidjanaise ne se trouve plus dans les salons,\nmais dans les feeds',
+                    'La nouvelle scËne capillaire abidjanaise ne se trouve plus dans les salons,\nmais dans les feeds',
                     style: TextStyle(
                       color: Color(0xFF993A25),
                       fontWeight: FontWeight.w600,
@@ -1235,13 +1251,13 @@ class _OpinionFullArticle extends StatelessWidget {
                         children: [
                           const TextSpan(
                             text:
-                                ' (Instagram, TikTok, Facebook) a √©t√© rapide. Elles offrent ce que les salons n‚Äôont pas su garantir :',
+                                ' (Instagram, TikTok, Facebook) a ÈtÈ rapide. Elles offrent ce que les salons níont pas su garantir :',
                           ),
                           ...buildBulletSpans(
                             [
-                              'une preuve visuelle de la comp√©tence',
-                              'un syst√®me de r√©servation',
-                              'une prestation mieux encadr√©e',
+                              'une preuve visuelle de la compÈtence',
+                              'un systËme de rÈservation',
+                              'une prestation mieux encadrÈe',
                             ],
                           ),
                         ],
@@ -1255,12 +1271,12 @@ class _OpinionFullArticle extends StatelessWidget {
                       text: 'Les coiffeuses en ligne ont ',
                       children: [
                         TextSpan(
-                          text: 'apport√© une nouvelle √©nergie',
+                          text: 'apportÈ une nouvelle Ènergie',
                           style: articleStrongStyle,
                         ),
                         const TextSpan(
                           text:
-                              '. Elles sont jeunes, autodidactes, et utilisent les r√©seaux sociaux comme un outil professionnel. Leur portefeuille client repose sur leurs avant/apr√®s, leurs r√©els esth√©tiques, leur branding personnel, un manifeste silencieux : ',
+                              '. Elles sont jeunes, autodidactes, et utilisent les rÈseaux sociaux comme un outil professionnel. Leur portefeuille client repose sur leurs avant/aprËs, leurs rÈels esthÈtiques, leur branding personnel, un manifeste silencieux : ',
                         ),
                         TextSpan(
                           text: '"voici ce que je sais faire"',
@@ -1268,13 +1284,13 @@ class _OpinionFullArticle extends StatelessWidget {
                         ),
                         const TextSpan(
                           text:
-                              '. Leur notori√©t√© ne d√©pend plus du bouche-√†-oreille, mais de la pr√©cision de leur feed et de la coh√©rence de leur identit√© visuelle.',
+                              '. Leur notoriÈtÈ ne dÈpend plus du bouche-‡-oreille, mais de la prÈcision de leur feed et de la cohÈrence de leur identitÈ visuelle.',
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 18),
-                  Text('Mais ce mod√®le a ses limites. Les r√®gles strictes (acompte, retards, frais de d√©placement) ne garantissent pas automatiquement une qualit√© sup√©rieure. Le digital a am√©lior√© la visibilit√©, pas toujours la professionnalisation, selon plusieurs clientes : ‚Äú45min de retard, 0 r√©duction mais si c‚Äô√©tait l‚Äôinverse j‚Äôaurais pay√© un suppl√©ment‚Äù'),
+                  Text('Mais ce modËle a ses limites. Les rËgles strictes (acompte, retards, frais de dÈplacement) ne garantissent pas automatiquement une qualitÈ supÈrieure. Le digital a amÈliorÈ la visibilitÈ, pas toujours la professionnalisation, selon plusieurs clientes : ì45min de retard, 0 rÈduction mais si cíÈtait líinverse jíaurais payÈ un supplÈmentî'),
                   SizedBox(height: 18),
                   
                 ],
@@ -1284,7 +1300,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             child: DefaultTextStyle.merge(
               style: articleBodyStyle,
@@ -1292,10 +1308,10 @@ class _OpinionFullArticle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'L‚Äôinflation capillaire : la hausse des prix red√©finit le secteur',
+                    'Líinflation capillaire : la hausse des prix redÈfinit le secteur',
                     style: TextStyle(
                       color: Color(0xFF993A25),
-                      fontSize: 26,
+                      fontSize: fluid(context, min: 20, max: 26),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1303,23 +1319,23 @@ class _OpinionFullArticle extends StatelessWidget {
                   Text.rich(
                     TextSpan(
                       children: [
-                        const TextSpan(text: 'Les m√®ches ont augment√© bien plus vite que l‚Äôinflation g√©n√©rale.'),
+                        const TextSpan(text: 'Les mËches ont augmentÈ bien plus vite que líinflation gÈnÈrale.'),
                         const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'En 2016, un paquet de m√®ches co√ªtait ',
+                          text: 'En 2016, un paquet de mËches co˚tait ',
                           children: [
                             TextSpan(
-                              text: '800 √† 1000 FCFA',
+                              text: '800 ‡ 1000 FCFA',
                               style: articleStrongStyle,
                             ),
                             const TextSpan(text: '. En 2025, il atteint '),
                             TextSpan(
-                              text: '1200 √† 1500 FCFA',
+                              text: '1200 ‡ 1500 FCFA',
                               style: articleStrongStyle,
                             ),
                             const TextSpan(
                               text:
-                                  '. Et les paquets sont plus l√©gers : une coiffure qui n√©cessitait cinq paquets peut aujourd‚Äôhui en demander ',
+                                  '. Et les paquets sont plus lÈgers : une coiffure qui nÈcessitait cinq paquets peut aujourdíhui en demander ',
                             ),
                             TextSpan(
                               text: 'dix',
@@ -1327,7 +1343,7 @@ class _OpinionFullArticle extends StatelessWidget {
                             ),
                             const TextSpan(
                               text:
-                                  '. Le secteur suit une dynamique propre, port√©e par la d√©pendance aux importations provenant d‚ÄôAsie, la mont√©e de la demande et le pouvoir de march√© des revendeurs.',
+                                  '. Le secteur suit une dynamique propre, portÈe par la dÈpendance aux importations provenant díAsie, la montÈe de la demande et le pouvoir de marchÈ des revendeurs.',
                             ),
                           ],
                         ),
@@ -1335,21 +1351,21 @@ class _OpinionFullArticle extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: 'La main-d‚Äô≈ìuvre',
+                              text: 'La main-díúuvre',
                               style: articleStrongStyle,
                             ),
-                            const TextSpan(text: ' a suivi la m√™me courbe : certaines prestations '),
+                            const TextSpan(text: ' a suivi la mÍme courbe : certaines prestations '),
                             TextSpan(
-                              text: 'd√©passent les 20 000 FCFA',
+                              text: 'dÈpassent les 20 000 FCFA',
                               style: articleStrongStyle,
                             ),
-                            const TextSpan(text: ', un seuil impensable il y a quelques ann√©es.'),
+                            const TextSpan(text: ', un seuil impensable il y a quelques annÈes.'),
                           ],
                         ),
                         const TextSpan(text: ' '),
                         TextSpan(
                           text:
-                              'Du c√¥t√© des salons, la hausse n‚Äôest pas qu‚Äôune question de tendance. Ils r√©percutent des charges en ',
+                              'Du cÙtÈ des salons, la hausse níest pas quíune question de tendance. Ils rÈpercutent des charges en ',
                           children: [
                             TextSpan(
                               text: 'forte augmentation',
@@ -1357,28 +1373,28 @@ class _OpinionFullArticle extends StatelessWidget {
                             ),
                             const TextSpan(
                               text:
-                                  ' : loyers pass√©s de 80 000 √† 150 000, parfois 250 000 FCFA; salaires en hausse; r√©novations devenues indispensables pour rester attractifs.',
+                                  ' : loyers passÈs de 80 000 ‡ 150 000, parfois 250 000 FCFA; salaires en hausse; rÈnovations devenues indispensables pour rester attractifs.',
                             ),
                           ],
                         ),
                         const TextSpan(text: ' '),
                         TextSpan(
-                          text: 'Les coiffeuses en ligne, quant √† elles, mobilisent leur ',
+                          text: 'Les coiffeuses en ligne, quant ‡ elles, mobilisent leur ',
                           children: [
                             TextSpan(
-                              text: '‚Äúpricing power‚Äù',
+                              text: 'ìpricing powerî',
                               style: articleStrongStyle,
                             ),
                             const TextSpan(
                               text:
-                                  ' : on paie la comp√©tence, le d√©placement, et la forte demande.',
+                                  ' : on paie la compÈtence, le dÈplacement, et la forte demande.',
                             ),
                           ],
                         ),
                         const TextSpan(text: ' '),
                         TextSpan(
                           text:
-                              'Dans cet √©cosyst√®me, chacun tente de s‚Äôajuster, souvent au d√©triment de la cliente, qui voit ',
+                              'Dans cet ÈcosystËme, chacun tente de síajuster, souvent au dÈtriment de la cliente, qui voit ',
                           children: [
                             TextSpan(
                               text: 'le prix final grimper',
@@ -1386,7 +1402,7 @@ class _OpinionFullArticle extends StatelessWidget {
                             ),
                             const TextSpan(
                               text:
-                                  ' beaucoup plus vite que la qualit√© du service. Oblig√©e de trouver des alternatives telles que se couper les cheveux ou encore opter pour des perruques.',
+                                  ' beaucoup plus vite que la qualitÈ du service. ObligÈe de trouver des alternatives telles que se couper les cheveux ou encore opter pour des perruques.',
                             ),
                           ],
                         ),
@@ -1394,12 +1410,12 @@ class _OpinionFullArticle extends StatelessWidget {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Cette revalorisation du travail f√©minin est importante',
+                              text: 'Cette revalorisation du travail fÈminin est importante',
                               style: articleStrongStyle,
                             ),
                             const TextSpan(
                               text:
-                                  ', mais elle g√©n√®re aussi une segmentation √©conomique. La beaut√© devient un espace d‚Äôexclusion progressive.',
+                                  ', mais elle gÈnËre aussi une segmentation Èconomique. La beautÈ devient un espace díexclusion progressive.',
                             ),
                           ],
                         ),
@@ -1413,7 +1429,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
            
           ),
@@ -1429,7 +1445,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             child: DefaultTextStyle.merge(
               style: articleBodyStyle,
@@ -1437,10 +1453,10 @@ class _OpinionFullArticle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Un secteur satur√© : concurrence et diff√©renciation',
+                    'Un secteur saturÈ : concurrence et diffÈrenciation',
                     style: TextStyle(
                       color: Color(0xFF993A25),
-                      fontSize: 26,
+                      fontSize: fluid(context, min: 20, max: 26),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1448,7 +1464,7 @@ class _OpinionFullArticle extends StatelessWidget {
                   Text.rich(
                     TextSpan(
                       text:
-                          'L‚Äôinflation reconfigure aussi la dynamique du m√©tier. La coiffure est devenue un ',
+                          'Líinflation reconfigure aussi la dynamique du mÈtier. La coiffure est devenue un ',
                       children: [
                         TextSpan(
                           text: 'espace de concurrence intense',
@@ -1456,36 +1472,36 @@ class _OpinionFullArticle extends StatelessWidget {
                         ),
                         const TextSpan(
                           text:
-                              ', parfois d√©sordonn√©e, o√π salons et ind√©pendants tentent de se d√©marquer dans un march√© satur√©.',
+                              ', parfois dÈsordonnÈe, o˘ salons et indÈpendants tentent de se dÈmarquer dans un marchÈ saturÈ.',
                         ),
                       ],
                     ),
                   ),
                   SizedBox(height: 18),
                   Text(
-                    'De nombreuses jeunes femmes se sont tourn√©es vers les m√©tiers de beaut√© : coiffure, ongles, cils. Le secteur s‚Äôest √©largi, mais sans r√©elle structure. ‚ÄúAujourd‚Äôhui, Tout le monde se l√®ve et ouvre un salon‚Äù, nous a confi√© Aim√©e (coiffeuse depuis 2009), et souvent sans formation compl√®te.',
+                    'De nombreuses jeunes femmes se sont tournÈes vers les mÈtiers de beautÈ : coiffure, ongles, cils. Le secteur síest Èlargi, mais sans rÈelle structure. ìAujourdíhui, Tout le monde se lËve et ouvre un salonî, nous a confiÈ AimÈe (coiffeuse depuis 2009), et souvent sans formation complËte.',
                   ),
                   SizedBox(height: 18),
                   Align(
                     alignment: const Alignment(0.2, 0),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxWidth: math.min(800, pageWidth * 0.8),
+                        maxWidth: quoteMaxWidth,
                       ),
                       child: Text(
-                        'R√©sultat : une offre abondante, mais in√©gale, o√π la fa√ßade importe parfois plus\nque la technique.',
+                        'RÈsultat : une offre abondante, mais inÈgale, o˘ la faÁade importe parfois plus\nque la technique.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF993A25),
                           fontWeight: FontWeight.w600,
-                          fontSize: 22,
+                          fontSize: fluid(context, min: 18, max: 22),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(height: 18),
                   Text(
-                    'Les prix suivent cette logique, sans cadre ni r√©glementation, chacun fixe ses tarifs selon la demande ou la concurrence imm√©diate. Certaines coiffeuses dipl√¥m√©es travaillent pour des propri√©taires non form√©es, souvent mal r√©mun√©r√©es. D‚Äôautres, pourtant talentueuses, peinent √† fid√©liser une client√®le qui annule √† la derni√®re minute ou refuse l‚Äôacompte par crainte de perdre leur argent.',
+                    'Les prix suivent cette logique, sans cadre ni rÈglementation, chacun fixe ses tarifs selon la demande ou la concurrence immÈdiate. Certaines coiffeuses diplÙmÈes travaillent pour des propriÈtaires non formÈes, souvent mal rÈmunÈrÈes. Díautres, pourtant talentueuses, peinent ‡ fidÈliser une clientËle qui annule ‡ la derniËre minute ou refuse líacompte par crainte de perdre leur argent.',
                   ),
                   SizedBox(height: 18),
                   Text.rich(
@@ -1493,18 +1509,18 @@ class _OpinionFullArticle extends StatelessWidget {
                       text: 'Dans ce paysage, ',
                       children: [
                         TextSpan(
-                          text: 'se diff√©rencier devient central',
+                          text: 'se diffÈrencier devient central',
                           style: articleStrongStyle,
                         ),
                         const TextSpan(
                           text:
-                              '. Pas seulement par le style, mais par la constance. Se former en continu, respecter les horaires, et comprendre les clientes plut√¥t que les sanctionner : ‚Äú',
+                              '. Pas seulement par le style, mais par la constance. Se former en continu, respecter les horaires, et comprendre les clientes plutÙt que les sanctionner : ì',
                         ),
                         TextSpan(
                           text: 'Une cliente peut en amener dix',
                           style: articleStrongStyle,
                         ),
-                        const TextSpan(text: '‚Äù.'),
+                        const TextSpan(text: 'î.'),
                       ],
                     ),
                   ),
@@ -1513,10 +1529,10 @@ class _OpinionFullArticle extends StatelessWidget {
                     alignment: const Alignment(0.2, 0),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxWidth: math.min(800, pageWidth * 0.8),
+                        maxWidth: quoteMaxWidth,
                       ),
                       child: Text(
-                        'Le d√©fi n‚Äôest donc plus seulement de se faire conna√Ætre, mais de se rendre indispensable.',
+                        'Le dÈfi níest donc plus seulement de se faire connaÓtre, mais de se rendre indispensable.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF993A25),
@@ -1532,7 +1548,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             
           ),
@@ -1552,7 +1568,7 @@ class _OpinionFullArticle extends StatelessWidget {
           SizedBox(height: 28),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: math.min(1200, pageWidth * 0.94),
+              maxWidth: articleTextMaxWidth,
             ),
             child: DefaultTextStyle.merge(
               style: articleBodyStyle,
@@ -1560,30 +1576,30 @@ class _OpinionFullArticle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Comment r√©inventer le salon moderne ?',
+                    'Comment rÈinventer le salon moderne ?',
                     style: TextStyle(
                       color: Color(0xFF993A25),
-                      fontSize: 26,
+                      fontSize: fluid(context, min: 20, max: 26),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 18),
                   Text(
-                    'Le m√©tier se red√©finit √† grande vitesse. Mais la question essentielle reste simple : comment construire un mod√®le qui respecte √† la fois la cliente, la coiffeuse et le cheveu ?',
+                    'Le mÈtier se redÈfinit ‡ grande vitesse. Mais la question essentielle reste simple : comment construire un modËle qui respecte ‡ la fois la cliente, la coiffeuse et le cheveu ?',
                   ),
                   SizedBox(height: 18),
                   Text(
-                    'Derri√®re la rupture, il n‚Äôy a pas de recherche d‚Äôexceptionnel, juste des attentes simples, l√©gitimes et claires.',
+                    'DerriËre la rupture, il níy a pas de recherche díexceptionnel, juste des attentes simples, lÈgitimes et claires.',
                   ),
                   SizedBox(height: 18),
                   Text.rich(
                     TextSpan(
                       children: buildBulletSpans(
                         [
-                          'De la douceur et une ma√Ætrise gr√¢ce √† une formation solide sans demander des prix exorbitants',
+                          'De la douceur et une maÓtrise gr‚ce ‡ une formation solide sans demander des prix exorbitants',
                           'Le respect du temps, pour la cliente comme pour la coiffeuse',
-                          'Une transparence prix service par service, o√π le montant final ne surprend pas',
-                          'Et surtout, un lieu, salon ou domicile, o√π le cheveu afro est compris comme une norme, pas l‚Äôexigence d‚Äôune cliente \"difficile\"',
+                          'Une transparence prix service par service, o˘ le montant final ne surprend pas',
+                          'Et surtout, un lieu, salon ou domicile, o˘ le cheveu afro est compris comme une norme, pas líexigence díune cliente \"difficile\"',
                         ],
                         leadingNewline: false,
                       ),
@@ -1594,15 +1610,15 @@ class _OpinionFullArticle extends StatelessWidget {
                     alignment: const Alignment(0.2, 0),
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxWidth: math.min(800, pageWidth * 0.8),
+                        maxWidth: quoteMaxWidth,
                       ),
                       child: Text(
-                        'Le d√©bat n‚Äôest pas de choisir entre salon et coiffeuse Instagram. Il est de\ncomprendre comment construire un mod√®le qui r√©unit ce que chacun sait faire\nde mieux.',
+                        'Le dÈbat níest pas de choisir entre salon et coiffeuse Instagram. Il est de\ncomprendre comment construire un modËle qui rÈunit ce que chacun sait faire\nde mieux.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Color(0xFF993A25),
                           fontWeight: FontWeight.w600,
-                          fontSize: 22,
+                          fontSize: fluid(context, min: 18, max: 22),
                         ),
                       ),
                     ),
@@ -1639,12 +1655,12 @@ class _PortraitPageState extends State<PortraitPage> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const _AsyncSectionLoading(
-                message: 'Chargement des portraits‚Ä¶');
+                message: 'Chargement des portraitsÖ');
           }
           if (snapshot.hasError) {
             return const _SectionPlaceholder(
               title: 'Portrait',
-              message: 'Impossible d‚Äôafficher les portraits pour le moment.',
+              message: 'Impossible díafficher les portraits pour le moment.',
             );
           }
           final data = snapshot.data;
@@ -1771,8 +1787,8 @@ class _AboutSection extends StatelessWidget {
     final quoteSize = fluid(context, min: 24, max: 42);
 
     const introParagraphs = [
-      'Fond√© en 2025 √† Abidjan, Kaalis Media est un m√©dia digital ind√©pendant qui red√©finit la mani√®re dont la culture, le design et le lifestyle africains sont per√ßus, partag√©s et c√©l√©br√©s. N√© de la volont√© de raconter une Afrique moderne √† travers le regard de sa jeunesse cr√©ative, Kaalis s‚Äôimpose comme une plateforme curat√©e, esth√©tique et profond√©ment ancr√©e dans son √©poque.',
-      'Con√ßu comme un m√©dia lifestyle centr√© sur la sc√®ne ouest-africaine, Kaalis s‚Äôengage √† cr√©er un espace √©ditorial pluriel et inclusif, o√π la mode, la culture, la gastronomie, l‚Äôart et l‚Äôhospitalit√© dialoguent. Chaque contenu vise √† mettre en lumi√®re les lieux, les voix et les id√©es qui fa√ßonnent la modernit√© africaine.',
+      'FondÈ en 2025 ‡ Abidjan, Kaalis Media est un mÈdia digital indÈpendant qui redÈfinit la maniËre dont la culture, le design et le lifestyle africains sont perÁus, partagÈs et cÈlÈbrÈs. NÈ de la volontÈ de raconter une Afrique moderne ‡ travers le regard de sa jeunesse crÈative, Kaalis síimpose comme une plateforme curatÈe, esthÈtique et profondÈment ancrÈe dans son Èpoque.',
+      'ConÁu comme un mÈdia lifestyle centrÈ sur la scËne ouest-africaine, Kaalis síengage ‡ crÈer un espace Èditorial pluriel et inclusif, o˘ la mode, la culture, la gastronomie, líart et líhospitalitÈ dialoguent. Chaque contenu vise ‡ mettre en lumiËre les lieux, les voix et les idÈes qui faÁonnent la modernitÈ africaine.',
     ];
 
     final paragraphStyle = _ppAcma(const TextStyle(
@@ -1804,7 +1820,7 @@ class _AboutSection extends StatelessWidget {
           ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 640),
             child: Text(
-              '"Red√©finir le m√©dia √† l‚Äôivoirienne"',
+              '"RedÈfinir le mÈdia ‡ líivoirienne"',
               textAlign: TextAlign.center,
               style: _ppAcma(
                 TextStyle(
@@ -1965,20 +1981,20 @@ class _PartnersContent extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const _AsyncSectionLoading(
-              message: 'Chargement des opportunit√©s‚Ä¶');
+              message: 'Chargement des opportunitÈsÖ');
         }
         if (snapshot.hasError) {
           return _SectionPlaceholder(
             title: 'Partenariats',
             message:
-                'Impossible de r√©cup√©rer les opportunit√©s (${snapshot.error}).',
+                'Impossible de rÈcupÈrer les opportunitÈs (${snapshot.error}).',
           );
         }
         final sections = snapshot.data;
         if (sections == null || sections.isEmpty) {
           return const _SectionPlaceholder(
             title: 'Partenariats',
-            message: 'Aucune opportunit√© disponible pour le moment.',
+            message: 'Aucune opportunitÈ disponible pour le moment.',
           );
         }
 
@@ -2121,7 +2137,7 @@ class _PartnerContentBlock extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
-                      '‚Ä¢',
+                      'ï',
                       style:
                           TextStyle(color: Color(0xFF3A3A3A), fontSize: 16),
                     ),
@@ -2189,7 +2205,7 @@ class _PartnerCTAState extends State<_PartnerCTA> {
             border: Border.all(color: background, width: 2),
           ),
           child: Text(
-            'Contacter l‚Äô√©quipe',
+            'Contacter líÈquipe',
             style: _ppAcma(
               TextStyle(
                 fontWeight: FontWeight.w700,
@@ -2360,7 +2376,7 @@ class _PartnerContactModalState extends State<_PartnerContactModal> {
                                   ),
                                   const SizedBox(height: 18),
                                 _buildField(
-                                  label: 'Pr√©nom et NOM',
+                                  label: 'PrÈnom et NOM',
                                   controller: _nameController,
                                   focusNode: _nameFocus,
                                 ),
@@ -2451,49 +2467,49 @@ class _PrivacyContent extends StatelessWidget {
 
   static const _sections = [
     (
-      title: 'Donn√©es collect√©es',
+      title: 'DonnÈes collectÈes',
       paragraphs: [
-        'Nous collectons votre pr√©nom, nom et adresse email lorsque vous vous abonnez √† notre newsletter ou nous contactez via un formulaire. Nous collectons √©galement des donn√©es de navigation (cookies, pages visit√©es) via des outils d‚Äôanalyse pour am√©liorer notre site.'
+        'Nous collectons votre prÈnom, nom et adresse email lorsque vous vous abonnez ‡ notre newsletter ou nous contactez via un formulaire. Nous collectons Ègalement des donnÈes de navigation (cookies, pages visitÈes) via des outils díanalyse pour amÈliorer notre site.'
       ],
       bullets: <String>[]
     ),
     (
-      title: 'Utilisation de vos donn√©es',
+      title: 'Utilisation de vos donnÈes',
       paragraphs: [
-        'Vos donn√©es servent exclusivement √† :',
+        'Vos donnÈes servent exclusivement ‡ :',
       ],
       bullets: [
         'vous envoyer notre newsletter,',
-        'r√©pondre √† vos messages,',
-        'vous informer de nos √©v√©nements,',
-        'am√©liorer l‚Äôexp√©rience et le contenu de notre site.',
+        'rÈpondre ‡ vos messages,',
+        'vous informer de nos ÈvÈnements,',
+        'amÈliorer líexpÈrience et le contenu de notre site.',
       ]
     ),
     (
-      title: 'Partage de vos donn√©es',
+      title: 'Partage de vos donnÈes',
       paragraphs: [
-        'Nous partageons vos donn√©es uniquement avec nos prestataires techniques (h√©bergement du site, service d‚Äôenvoi d‚Äôemails, solution d‚Äôanalytics) strictement pour fournir nos services. Nous ne vendons jamais vos donn√©es.'
+        'Nous partageons vos donnÈes uniquement avec nos prestataires techniques (hÈbergement du site, service díenvoi díemails, solution díanalytics) strictement pour fournir nos services. Nous ne vendons jamais vos donnÈes.'
       ],
       bullets: <String>[]
     ),
     (
       title: 'Conservation',
       paragraphs: [
-        'Nous conservons vos donn√©es tant que vous √™tes abonn√©¬∑e, puis 3 ans apr√®s votre dernier contact. Les cookies sont conserv√©s pour une dur√©e maximale de 13 mois.'
+        'Nous conservons vos donnÈes tant que vous Ítes abonnÈ∑e, puis 3 ans aprËs votre dernier contact. Les cookies sont conservÈs pour une durÈe maximale de 13 mois.'
       ],
       bullets: <String>[]
     ),
     (
       title: 'Vos droits',
       paragraphs: [
-        'Conform√©ment √† la r√©glementation applicable, vous disposez des droits d‚Äôacc√®s, de rectification, d‚Äôeffacement, d‚Äôopposition, de limitation et de portabilit√© de vos donn√©es personnelles. Vous pouvez vous d√©sabonner de la newsletter via le lien pr√©sent en bas de chaque email.'
+        'ConformÈment ‡ la rÈglementation applicable, vous disposez des droits díaccËs, de rectification, díeffacement, díopposition, de limitation et de portabilitÈ de vos donnÈes personnelles. Vous pouvez vous dÈsabonner de la newsletter via le lien prÈsent en bas de chaque email.'
       ],
       bullets: <String>[]
     ),
     (
       title: 'Contact',
       paragraphs: [
-        'Pour toute question ou demande concernant vos donn√©es : contact@kaalismagazine.com'
+        'Pour toute question ou demande concernant vos donnÈes : contact@kaalismagazine.com'
       ],
       bullets: <String>[]
     ),
@@ -2514,7 +2530,7 @@ class _PrivacyContent extends StatelessWidget {
             children: [
               Center(
                 child: Text(
-                  'Politique De Confidentialit√©',
+                  'Politique De ConfidentialitÈ',
                   softWrap: true,
                   textAlign: TextAlign.center,
                   style: _ppAcma(
@@ -2532,7 +2548,7 @@ class _PrivacyContent extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 780),
                   child: Text(
-                    'Kaalis Magazine respecte votre vie priv√©e et s‚Äôengage √† prot√©ger vos donn√©es personnelles.',
+                    'Kaalis Magazine respecte votre vie privÈe et síengage ‡ protÈger vos donnÈes personnelles.',
                     textAlign: TextAlign.center,
                     style: _ppAcma(
                       const TextStyle(
@@ -2580,7 +2596,7 @@ class _PrivacyContent extends StatelessWidget {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('‚Ä¢ ',
+                              const Text('ï ',
                                   style: TextStyle(
                                       color: Color(0xFF3A3A3A), fontSize: 15)),
                               Expanded(
@@ -2606,7 +2622,7 @@ class _PrivacyContent extends StatelessWidget {
               ],
               const SizedBox(height: 20),
               Text(
-                'Derni√®re mise √† jour : 07/11/2025',
+                'DerniËre mise ‡ jour : 07/11/2025',
                 style: _ppAcma(
                   const TextStyle(
                     fontSize: 13,
@@ -2737,40 +2753,61 @@ class SectionHead extends StatelessWidget {
                 height:
                     32), // Breathing room between the rule and the heading text.
           ],
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  softWrap: true,
-                  style: _ppAcma(
-                    TextStyle(
-                      color: kaalisPrimary,
-                      fontWeight: FontWeight.w700,
-                      fontSize: titleSize,
-                      height: 0.95,
-                    ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final titleWidget = Text(
+                title,
+                softWrap: true,
+                style: _ppAcma(
+                  TextStyle(
+                    color: kaalisPrimary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: titleSize,
+                    height: 0.95,
                   ),
                 ),
-              ),
-              if (action != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(
-                    action!,
-                    style: _ppAcma(
-                      const TextStyle(
-                        color: kaalisPrimary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        letterSpacing: 0.6,
-                        decoration: TextDecoration.underline,
+              );
+              final actionWidget = action == null
+                  ? null
+                  : Text(
+                      action!,
+                      style: _ppAcma(
+                        const TextStyle(
+                          color: kaalisPrimary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          letterSpacing: 0.6,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
+                    );
+              if (constraints.maxWidth < 520) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    titleWidget,
+                    if (actionWidget != null) ...[
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: actionWidget,
+                      ),
+                    ],
+                  ],
+                );
+              }
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(child: titleWidget),
+                  if (actionWidget != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: actionWidget,
                     ),
-                  ),
-                ),
-            ],
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -2795,12 +2832,12 @@ class _SectionOpinionState extends State<SectionOpinion> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const _AsyncSectionLoading(
-              message: 'Chargement des articles Opinion‚Ä¶');
+              message: 'Chargement des articles OpinionÖ');
         }
         if (snapshot.hasError) {
           return const _SectionPlaceholder(
             title: 'Opinion',
-            message: 'Impossible d‚Äôafficher les articles pour le moment.',
+            message: 'Impossible díafficher les articles pour le moment.',
           );
         }
         final data = snapshot.data;
@@ -3470,12 +3507,12 @@ class _SectionPortraitState extends State<SectionPortrait> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const _AsyncSectionLoading(
-              message: 'Chargement des portraits‚Ä¶');
+              message: 'Chargement des portraitsÖ');
         }
         if (snapshot.hasError) {
           return const _SectionPlaceholder(
             title: 'Portrait',
-            message: 'Impossible d‚Äôafficher les portraits pour le moment.',
+            message: 'Impossible díafficher les portraits pour le moment.',
           );
         }
         final data = snapshot.data;
@@ -4297,7 +4334,7 @@ const _communityEvents = [
     date: 'Samedi 10 janvier 2026',
     time: '18:00 \u2013 20:00',
     description:
-        'Un atelier in√©dit autour de la cr√©ation musicale et des performances immersives du collectif Kaalis.',
+        'Un atelier inÈdit autour de la crÈation musicale et des performances immersives du collectif Kaalis.',
     imageUrl: 'https://picsum.photos/seed/event-3/1200/800',
   ),
 ];
@@ -4570,12 +4607,12 @@ class _CommunityHeroNavActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final searchWidth = compact ? 160.0 : 220.0;
-    final logoSize = compact ? 56.0 : 80.0;
-    final iconSize = compact ? 32.0 : 44.0;
-    final spacing = compact ? 12.0 : 18.0;
+    final searchWidth = fluid(context, min: 120, max: compact ? 180 : 220);
+    final logoSize = fluid(context, min: 40, max: compact ? 64 : 80);
+    final iconSize = fluid(context, min: 24, max: compact ? 36 : 44);
+    final spacing = fluid(context, min: 8, max: compact ? 12 : 18);
 
-    return Row(
+    final actions = Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -4597,6 +4634,12 @@ class _CommunityHeroNavActions extends StatelessWidget {
           ),
         ),
       ],
+    );
+
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerRight,
+      child: actions,
     );
   }
 }
@@ -4997,8 +5040,8 @@ class _CommunityEventModalState extends State<_CommunityEventModal> {
                         children: [
                           _ModalTextField(
                             controller: _nameController,
-                            label: 'Pr√©nom et NOM',
-                            hint: 'Kossi Traor√©',
+                            label: 'PrÈnom et NOM',
+                            hint: 'Kossi TraorÈ',
                             border: border,
                             validator: (value) =>
                                 (value?.trim().isEmpty ?? true) ? 'Obligatoire' : null,
@@ -5056,7 +5099,7 @@ class _CommunityEventModalState extends State<_CommunityEventModal> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Merci ${_nameController.text.trim()} ‚Äî nous revenons vers vous rapidement.',
+                              'Merci ${_nameController.text.trim()} ó nous revenons vers vous rapidement.',
                             ),
                             backgroundColor: Colors.white,
                             behavior: SnackBarBehavior.floating,
@@ -5347,7 +5390,7 @@ class _NewsletterDrawerState extends State<NewsletterDrawer> {
   Widget _buildContent(BuildContext context) {
     _moreRecognizer.onTap = () {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Plus d‚Äôinformations arrivent bient√¥t.')),
+        const SnackBar(content: Text('Plus díinformations arrivent bientÙt.')),
       );
     };
     return Form(
@@ -5708,7 +5751,7 @@ class _FooterBannerState extends State<_FooterBanner> {
         behavior: HitTestBehavior.opaque,
         child: Semantics(
           button: true,
-          label: 'Ouvrir l‚Äôinscription √† la newsletter Kaalis',
+          label: 'Ouvrir líinscription ‡ la newsletter Kaalis',
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 220),
             curve: Curves.easeOutCubic,
