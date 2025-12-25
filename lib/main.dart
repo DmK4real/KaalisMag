@@ -447,13 +447,30 @@ class _Container extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedPadding = padding.resolve(Directionality.of(context));
+    final width = MediaQuery.of(context).size.width;
+    double clampHorizontal(double inset) {
+      if (width < 420) {
+        return math.min(inset, 20);
+      }
+      if (width < 720) {
+        return math.min(inset, 28);
+      }
+      return inset;
+    }
+    final effectivePadding = EdgeInsets.fromLTRB(
+      clampHorizontal(resolvedPadding.left),
+      resolvedPadding.top,
+      clampHorizontal(resolvedPadding.right),
+      resolvedPadding.bottom,
+    );
     return Align(
       alignment: Alignment.center,
       child: Container(
         constraints: maxWidth != null
             ? BoxConstraints(maxWidth: maxWidth!)
             : const BoxConstraints(),
-        padding: padding,
+        padding: effectivePadding,
         child: child,
       ),
     );
@@ -509,8 +526,8 @@ class _Header extends StatelessWidget {
           builder: (context, constraints) {
             final isCompact = constraints.maxWidth < 820;
             final isTight = constraints.maxWidth < 420;
-            final spacing = isTight ? 24.0 : 40.0;
-            final fontSize = isTight ? 15.0 : 17.0;
+            final spacing = isTight ? 20.0 : 40.0;
+            final fontSize = isTight ? 14.0 : 17.0;
 
             Widget navLinks = Align(
               alignment: Alignment.centerLeft,
@@ -558,17 +575,18 @@ class _Header extends StatelessWidget {
             );
 
             Widget brand = _HeaderBrand(
-                activeRoute: activeRoute, fontSize: isCompact ? 84 : 104);
+                activeRoute: activeRoute,
+                fontSize: isTight ? 68 : (isCompact ? 84 : 104));
 
             Widget searchButton({double width = 260}) =>
                 _HeaderSearchButton(onTap: () => _openSearch(context), width: width);
 
-            final searchWidth = isTight ? 220.0 : 260.0;
-            final iconSpacing = isTight ? 16.0 : 24.0;
-            final iconSpacingSecondary = isTight ? 20.0 : 32.0;
-            final bookmarkSize = isTight ? 36.0 : 44.0;
-            final logoSize = isTight ? 68.0 : 92.0;
-            final logoOffset = isTight ? 4.0 : 6.0;
+            final searchWidth = isTight ? 160.0 : 260.0;
+            final iconSpacing = isTight ? 12.0 : 24.0;
+            final iconSpacingSecondary = isTight ? 16.0 : 32.0;
+            final bookmarkSize = isTight ? 32.0 : 44.0;
+            final logoSize = isTight ? 56.0 : 92.0;
+            final logoOffset = isTight ? 2.0 : 6.0;
             final actionRow = Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -591,26 +609,53 @@ class _Header extends StatelessWidget {
               ],
             );
 
-            final content = Padding(
-              padding: const EdgeInsets.only(top: 80, bottom: 56),
-              child: isCompact
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(child: brand),
-                            const SizedBox(width: 24),
-                            Flexible(
-                                child: FittedBox(
-                                    fit: BoxFit.scaleDown, child: actionRow)),
-                          ],
+            final compactContent = isTight
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: brand,
                         ),
-                        const SizedBox(height: 28),
-                        navLinks,
-                      ],
-                    )
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: actionRow,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      navLinks,
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(child: brand),
+                          const SizedBox(width: 24),
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: actionRow,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 28),
+                      navLinks,
+                    ],
+                  );
+
+            final content = Padding(
+              padding: EdgeInsets.only(top: isTight ? 48 : 80, bottom: isTight ? 36 : 56),
+              child: isCompact
+                  ? compactContent
                   : Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -912,6 +957,8 @@ class _OpinionFullArticle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pageWidth = MediaQuery.of(context).size.width;
+    final mediaMaxWidth =
+        math.min(1000, pageWidth * (pageWidth < 720 ? 0.98 : 0.9));
     const articleBodyStyle = TextStyle(
       fontSize: 18,
       height: 1.9,
@@ -1167,9 +1214,7 @@ class _OpinionFullArticle extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width < 1000
-                    ? MediaQuery.of(context).size.width - 128
-                    : 1000,
+                maxWidth: mediaMaxWidth,
               ),
               child: Image.asset('assets/images/PHOTO 2.jpeg', fit: BoxFit.cover),
             ),
@@ -1390,9 +1435,7 @@ class _OpinionFullArticle extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width < 1000
-                    ? MediaQuery.of(context).size.width - 128
-                    : 1000,
+                maxWidth: mediaMaxWidth,
               ),
               child: Image.asset('assets/images/PHOTO 3.jpeg', fit: BoxFit.cover),
             ),
@@ -1511,9 +1554,7 @@ class _OpinionFullArticle extends StatelessWidget {
           Center(
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width < 1000
-                    ? MediaQuery.of(context).size.width - 128
-                    : 1000,
+                maxWidth: mediaMaxWidth,
               ),
               child: SizedBox(
                 width: double.infinity,
