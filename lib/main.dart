@@ -63,9 +63,9 @@ TextStyle _ppAcma([TextStyle? style]) {
     fontFamily: _ppAcmaFamily,
     fontWeight: weight,
     fontFamilyFallback: const [
+      'NotoSans',
       'Segoe UI',
       'Arial',
-      'Noto Sans',
       'sans-serif',
     ],
   );
@@ -353,9 +353,9 @@ class _KaalisAppState extends State<KaalisApp> {
           seedColor: kaalisPrimary, primary: kaalisPrimary),
       fontFamily: _ppAcmaFamily,
       fontFamilyFallback: const [
+        'NotoSans',
         'Segoe UI',
         'Arial',
-        'Noto Sans',
         'sans-serif',
       ],
       textTheme: ThemeData.light().textTheme.apply(

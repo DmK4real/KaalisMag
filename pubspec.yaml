@@ -26,3 +26,9 @@ flutter:
       fonts:
         - asset: assets/fonts/PPAcma-Semibold.ttf
           weight: 600
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSans-SemiBold.ttf
+          weight: 600
