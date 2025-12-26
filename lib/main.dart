@@ -56,14 +56,20 @@ final Uri _xProfile = Uri.parse('https://x.com/kaalismag?s=11');
 
 const _ppAcmaFamily = 'PPAcma';
 
-TextStyle _ppAcma([TextStyle? style]) {
-  final resolved = style ?? const TextStyle();
-  final weight = resolved.fontWeight ?? FontWeight.w600;
-  return resolved.copyWith(
-    fontFamily: _ppAcmaFamily,
-    fontWeight: weight,
-  );
-}
+TextStyle _ppAcma([TextStyle? style]) {
+  final resolved = style ?? const TextStyle();
+  final weight = resolved.fontWeight ?? FontWeight.w600;
+  return resolved.copyWith(
+    fontFamily: _ppAcmaFamily,
+    fontWeight: weight,
+    fontFamilyFallback: const [
+      'Segoe UI',
+      'Arial',
+      'Noto Sans',
+      'sans-serif',
+    ],
+  );
+}
 
 const Color _cardPlaceholderBackground = Color(0xFFE8E8E8);
 const Color _cardPlaceholderIconColor = Color(0xFFB0B0B0);
@@ -342,14 +348,20 @@ class _KaalisAppState extends State<KaalisApp> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-          seedColor: kaalisPrimary, primary: kaalisPrimary),
-      fontFamily: _ppAcmaFamily,
-      textTheme: ThemeData.light().textTheme.apply(
-            fontFamily: _ppAcmaFamily,
-            bodyColor: kaalisText,
-            displayColor: kaalisText,
+    final theme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+          seedColor: kaalisPrimary, primary: kaalisPrimary),
+      fontFamily: _ppAcmaFamily,
+      fontFamilyFallback: const [
+        'Segoe UI',
+        'Arial',
+        'Noto Sans',
+        'sans-serif',
+      ],
+      textTheme: ThemeData.light().textTheme.apply(
+            fontFamily: _ppAcmaFamily,
+            bodyColor: kaalisText,
+            displayColor: kaalisText,
           ),
       scaffoldBackgroundColor: Colors.white,
       useMaterial3: true,
