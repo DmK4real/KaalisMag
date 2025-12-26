@@ -1420,7 +1420,7 @@ class _HeaderSearchButton extends StatelessWidget {
 
   Widget build(BuildContext context) {
 
-    final accent = enabled ? kaalisPrimary : kaalisMuted;
+    final accent = kaalisPrimary;
 
     return TextButton(
 
@@ -9332,7 +9332,7 @@ class _CommunityHeroSearchField extends StatelessWidget {
 
   Widget build(BuildContext context) {
 
-    final accent = enabled ? const Color(0xFFC5533E) : kaalisMuted;
+    final accent = const Color(0xFFC5533E);
 
     return MouseRegion(
 
